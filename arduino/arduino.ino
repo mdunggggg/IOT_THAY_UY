@@ -39,8 +39,7 @@ void setup() {
   client.setCallback(callback);
   
   while (!client.connected()) {
-    String client_id = "esp8266-client-";
-    client_id += String(WiFi.macAddress());
+    String client_id = "Hoang Manh Dung";
     
     Serial.printf("The client %s connects to the MQTT broker\n", client_id.c_str());
     
