@@ -24,7 +24,7 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "BE_B21DCCN268", "topic/temp-humidity");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "BE_B21DCCN268", "topic/temp-humidity-light");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);
