@@ -36,12 +36,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<PageRouteInfo> _mapRouteToPageRouteInfo() {
-    AppSharedPreference.instance.setValue(PrefKeys.token, 'test');
-    final token = AppSharedPreference.instance.getValue(PrefKeys.token);
-    if (token == null) {
-      return [const HomeRoute()];
-    } else {
-      return [const HomeRoute()];
-    }
+    return [const HomeRoute()];
   }
 }
