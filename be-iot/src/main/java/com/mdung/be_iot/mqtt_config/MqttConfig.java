@@ -1,4 +1,4 @@
-package com.mdung.be_iot;
+package com.mdung.be_iot.mqtt_config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,7 +8,6 @@ import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
@@ -25,7 +24,7 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "UniqueClientId", "test/topic");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "BE_B21DCCN268", "topic/temp-humidity");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(1);

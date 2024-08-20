@@ -8,7 +8,7 @@ const char *password = "25072003";  // Enter WiFi password
 
 // MQTT Broker settings
 const char *mqtt_broker = "172.20.10.2"; // Enter your MQTT broker IP
-const char *topic = "test/topic";
+const char *topic = "topic/temp-humidity";
 const int mqtt_port = 1883;
 
 WiFiClient espClient;
@@ -39,7 +39,7 @@ void setup() {
   client.setCallback(callback);
   
   while (!client.connected()) {
-    String client_id = "Hoang Manh Dung";
+    String client_id = "B21DCCN268";
     
     Serial.printf("The client %s connects to the MQTT broker\n", client_id.c_str());
     
@@ -82,15 +82,6 @@ void loop() {
     Serial.println("Failed to read from DHT sensor!");
     return;
   }
-
-  // Print sensor data to the Serial Monitor
-  // Serial.print("Temp: ");
-  // Serial.print(tc);
-  // Serial.print(" C, ");
-  // Serial.print(tf);
-  // Serial.print(" F, Hum: ");
-  // Serial.print(hu);
-  // Serial.println("%");
 
   // Create a JSON payload with the sensor data
   String payload = "{";
