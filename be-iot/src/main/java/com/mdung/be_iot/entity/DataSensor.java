@@ -16,6 +16,9 @@ public class DataSensor {
     @Column(name = "humidity")
     private double humidity;
 
+    @Column(name = "light")
+    private double light;
+
     @Column(name = "time")
     private Long time;
 
@@ -52,6 +55,14 @@ public class DataSensor {
         this.humidity = humidity;
     }
 
+    public double getLight() {
+        return light;
+    }
+
+    public void setLight(double light) {
+        this.light = light;
+    }
+
     public Long getTime() {
         return time;
     }
@@ -66,6 +77,7 @@ public class DataSensor {
                 "id=" + id +
                 ", temperature=" + temperature +
                 ", humidity=" + humidity +
+                ", light=" + light +
                 ", time=" + time +
                 '}';
     }

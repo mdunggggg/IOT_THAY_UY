@@ -26,4 +26,11 @@ public class DataSensorServiceImpl implements DataSensorService {
         Page<DataSensor> dataSensors = dataSensorRepository.findAll(pageable);
         return new Pagination(dataSensors.getNumber(), dataSensors.getTotalElements(), dataSensors.getTotalPages(), dataSensors.getContent());
     }
+
+    @Override
+    public DataSensor createDataSensor(DataSensor dataSensor) {
+        return dataSensorRepository.save(dataSensor);
+    }
+
+
 }

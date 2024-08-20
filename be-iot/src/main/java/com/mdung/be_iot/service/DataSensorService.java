@@ -12,4 +12,6 @@ import java.util.Map;
 
 public interface DataSensorService {
     Pagination getAllDataSensors(int page, int size);
+
+    DataSensor createDataSensor(DataSensor dataSensor);
 }

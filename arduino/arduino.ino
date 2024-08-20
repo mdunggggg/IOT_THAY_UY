@@ -111,7 +111,7 @@ void loop() {
 
   // Create a JSON payload with the sensor data
   String payload = "{";
-  payload += "\"temprature\": ";
+  payload += "\"temperature\": ";
   payload += tc;
   payload += ", \"humidity\": ";
   payload += hu;

@@ -1,5 +1,9 @@
 package com.mdung.be_iot.mqtt_config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mdung.be_iot.entity.DataSensor;
+import com.mdung.be_iot.service.DataSensorService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.IntegrationComponentScan;
@@ -11,10 +15,21 @@ import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.util.Map;
+
 @Configuration
 @EnableIntegration
 @IntegrationComponentScan
 public class MqttConfig {
+
+    private DataSensorService dataSensorService;
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    public MqttConfig(DataSensorService dataSensorService, ObjectMapper objectMapper){
+        this.dataSensorService = dataSensorService;
+        this.objectMapper = objectMapper;
+    }
 
     @Bean
     public MessageChannel mqttInputChannel() {
@@ -35,6 +50,17 @@ public class MqttConfig {
     @Bean
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
-        return message -> System.out.println("Received message: " + message.getPayload());
+        return message -> {
+            try {
+                String payload = (String) message.getPayload();
+                DataSensor dataSensor = objectMapper.readValue(payload, DataSensor.class);
+                dataSensor.setTime(System.currentTimeMillis());
+                dataSensorService.createDataSensor(dataSensor);
+                System.out.println("Saved data sensor: " + dataSensor);
+            } catch (Exception e) {
+                System.err.println("Failed to process message: " + e.getMessage());
+                e.printStackTrace();
+            }
+        };
     }
 }
