@@ -52,6 +52,10 @@ dependencies:
   loading_animation_widget: ^1.2.1
   fl_chart: ^0.68.0
   syncfusion_flutter_charts: ^26.2.10
+  salomon_bottom_bar: ^3.3.2
+  platform_device_id: ^1.0.1
+  device_information: ^0.0.4
+  device_info_plus: ^10.1.2
 
 dev_dependencies:
   flutter_test:

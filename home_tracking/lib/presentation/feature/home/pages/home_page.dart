@@ -207,8 +207,8 @@ class _HomePageState extends State<HomePage>
                         },
                         animation: _controller,
                       ),
-                      SwitchButton(value: myBloc.fan, onChanged: (value) {
-                        myBloc.setFan(value);
+                      SwitchButton(value: myBloc.fan, onChanged: (value) async {
+                            myBloc.setFan(value);
                         // stop animation
                         if (!value) {
                           _controller.stop();
@@ -231,7 +231,8 @@ class _HomePageState extends State<HomePage>
                     ],
                   ).expanded(),
                 ],
-              )
+              ),
+              OutlinedButton(onPressed: myBloc.add, child: Text("Add")),
             ],
           ),
         );

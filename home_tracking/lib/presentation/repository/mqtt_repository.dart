@@ -10,6 +10,7 @@ class MqttRepository {
     try {
       final payload = {
         'message': value ? 'on' : 'off',
+        'deviceId': 'IPhone 15 Pro'
       };
       await _dio.get('mqtt/turn-on-off-fan', data: payload);
     }
@@ -22,6 +23,7 @@ class MqttRepository {
     try {
       final payload = {
         'message': value ? 'on' : 'off',
+        'deviceId': 'IPhone 15 Pro'
       };
       await _dio.get('mqtt/turn-on-off-light', data: payload);
     }
@@ -34,6 +36,7 @@ class MqttRepository {
     try {
       final payload = {
         'message': value ? 'on' : 'off',
+        'deviceId': 'IPhone 15 Pro'
       };
       await _dio.get('mqtt/turn-on-off-air-condition', data: payload);
     }

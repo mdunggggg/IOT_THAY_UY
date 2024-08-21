@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 
-import '../../shared_data/app_shared_preference.dart';
-import '../../shared_data/pref_keys.dart';
 import '../di/di.dart';
 import '../router/router.dart';
 import '../router/router.gr.dart';
@@ -36,6 +34,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   List<PageRouteInfo> _mapRouteToPageRouteInfo() {
-    return [const HomeRoute()];
+    return [const MainRoute()];
   }
 }
