@@ -19,6 +19,7 @@ class HomeBloc extends Cubit<BlocState<List<DataSensorModel>>> {
     emit(state.copyWith(status: Status.loading));
     final res = await _dataSensorRepo.getDataSensors(page: _page, size: size);
     list.addAll(res.data ?? []);
+    list.sort((a, b) => (a.time ?? 0).compareTo(b.time ?? 0));
     emit(state.copyWith(status: Status.success));
     _page++;
   }

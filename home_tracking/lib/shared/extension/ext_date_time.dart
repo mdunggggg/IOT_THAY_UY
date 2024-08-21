@@ -10,4 +10,11 @@ extension extDateTime on DateTime? {
     }
     return '';
   }
+
+  String formatHHmm() {
+    if (this != null) {
+      return DateFormat('HH:mm').format(this!);
+    }
+    return '';
+  }
 }

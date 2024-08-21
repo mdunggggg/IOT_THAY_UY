@@ -6,6 +6,7 @@ import 'package:home_tracking/presentation/blocs/bloc_state.dart';
 import 'package:home_tracking/presentation/components/cache_image.dart';
 import 'package:home_tracking/presentation/components/loading.dart';
 import 'package:home_tracking/presentation/feature/home/bloc/home_bloc.dart';
+import 'package:home_tracking/presentation/feature/home/widget/chart_overview.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';
 import 'package:home_tracking/shared/style_text/style_text.dart';
@@ -23,7 +24,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   final myBloc = getIt.get<HomeBloc>();
 
   @override
@@ -38,6 +38,8 @@ class _HomePageState extends State<HomePage> {
               _buildHeader(),
               16.height,
               _buildOverview(),
+              16.height,
+              _buildChart(),
             ],
           ),
         ),
@@ -63,8 +65,7 @@ class _HomePageState extends State<HomePage> {
                 RichText(
                   text: TextSpan(
                     text: "Hello, ",
-                    style: StyleApp.medium(
-                        fontSize: 24, color: Colors.white),
+                    style: StyleApp.medium(fontSize: 24, color: Colors.white),
                     children: [
                       TextSpan(
                         text: "Mạnh Dũng",
@@ -76,17 +77,15 @@ class _HomePageState extends State<HomePage> {
                 ),
                 16.height,
                 Text("Track your home",
-                    style: StyleApp.medium(
-                        fontSize: 16, color: Colors.white)),
+                    style: StyleApp.medium(fontSize: 16, color: Colors.white)),
                 Text("Find all the information you need",
-                    style: StyleApp.light(
-                        fontSize: 12, color: Colors.white)),
+                    style: StyleApp.light(fontSize: 12, color: Colors.white)),
               ],
             ).expanded(),
             16.width,
             BaseCacheImage(
               url:
-              "https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg",
+                  "https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg",
               borderRadius: 8.radius,
             ).size(height: 100, width: 100)
           ],
@@ -98,7 +97,7 @@ class _HomePageState extends State<HomePage> {
   _buildOverview() {
     return BlocBuilder<HomeBloc, BlocState>(
       builder: (context, state) {
-        if(state.status == Status.loading) {
+        if (state.status == Status.loading) {
           return BaseLoading();
         }
         return Container(
@@ -135,6 +134,34 @@ class _HomePageState extends State<HomePage> {
               ).expanded(),
             ],
           ),
+        );
+      },
+    );
+  }
+
+  _buildChart() {
+    return BlocBuilder<HomeBloc, BlocState>(
+      builder: (context, state) {
+        if (state.status == Status.loading) {
+          return const BaseLoading();
+        }
+        return Container(
+          height: 300,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: 16.radius,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 7,
+                offset: const Offset(0, 3),
+              ),
+            ],
+          ),
+          margin: 16.padding,
+          padding: 16.padding,
+          child: ChartOverview(list: myBloc.list),
         );
       },
     );

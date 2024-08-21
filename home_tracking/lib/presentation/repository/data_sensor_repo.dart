@@ -18,7 +18,7 @@ class DataSensorRepo {
     try {
       final payload = {
         'page': page,
-        'size': size,
+        'size': 100,
       };
       payload.removeWhere((key, value) => value == null);
       final response = await _dio.get("data-sensors/", data: payload);
