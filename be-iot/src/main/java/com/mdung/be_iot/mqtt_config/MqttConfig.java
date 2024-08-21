@@ -3,6 +3,7 @@ package com.mdung.be_iot.mqtt_config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mdung.be_iot.entity.DataSensor;
 import com.mdung.be_iot.service.DataSensorService;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,9 @@ import org.springframework.integration.annotation.IntegrationComponentScan;
 import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
+import org.springframework.integration.mqtt.core.DefaultMqttPahoClientFactory;
 import org.springframework.integration.mqtt.inbound.MqttPahoMessageDrivenChannelAdapter;
+import org.springframework.integration.mqtt.outbound.MqttPahoMessageHandler;
 import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
@@ -51,16 +54,20 @@ public class MqttConfig {
     @ServiceActivator(inputChannel = "mqttInputChannel")
     public MessageHandler handler() {
         return message -> {
-            try {
-                String payload = (String) message.getPayload();
-                DataSensor dataSensor = objectMapper.readValue(payload, DataSensor.class);
-                dataSensor.setTime(System.currentTimeMillis());
-                dataSensorService.createDataSensor(dataSensor);
-                System.out.println("Saved data sensor: " + dataSensor);
-            } catch (Exception e) {
-                System.err.println("Failed to process message: " + e.getMessage());
-                e.printStackTrace();
-            }
+            System.out.println("Received message: " + message);
+//            try {
+//                String payload = (String) message.getPayload();
+//                DataSensor dataSensor = objectMapper.readValue(payload, DataSensor.class);
+//                dataSensor.setTime(System.currentTimeMillis());
+//                //dataSensorService.createDataSensor(dataSensor);
+//                System.out.println("Saved data sensor: " + dataSensor);
+//            } catch (Exception e) {
+//                System.err.println("Failed to process message: " + e.getMessage());
+//                e.printStackTrace();
+//            }
         };
     }
+
+
+
 }
