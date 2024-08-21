@@ -50,7 +50,7 @@ public class MqttController {
     }
 
 
-    @GetMapping("/turn-on-off-fan")
+    @GetMapping("/turn-on-off-air-condition")
     @Operation(summary = "Publish message to mqtt")
     public String changeAirCondition(
             @Parameter(
