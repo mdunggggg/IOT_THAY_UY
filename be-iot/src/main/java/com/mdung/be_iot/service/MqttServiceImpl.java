@@ -29,6 +29,6 @@ public class MqttServiceImpl implements MqttService{
 
     @Override
     public void turnAirConditioner(String message) {
-        mqttGateway.sendToMqtt(message + " air-conditioner");
+        mqttGateway.sendToMqtt(message + " air-condition");
     }
 }
