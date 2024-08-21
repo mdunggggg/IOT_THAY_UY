@@ -1,12 +1,14 @@
+import 'dart:math';
+
 import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:home_tracking/presentation/blocs/bloc_state.dart';
 import 'package:home_tracking/presentation/components/cache_image.dart';
 import 'package:home_tracking/presentation/components/loading.dart';
 import 'package:home_tracking/presentation/feature/home/bloc/home_bloc.dart';
 import 'package:home_tracking/presentation/feature/home/widget/chart_overview.dart';
+import 'package:home_tracking/presentation/feature/home/widget/switch_button.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';
 import 'package:home_tracking/shared/style_text/style_text.dart';
@@ -23,8 +25,23 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
   final myBloc = getIt.get<HomeBloc>();
+
+  late AnimationController _controller;
+  late Animation<double> _animation;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+
+    _animation = Tween<double>(begin: 0, end: 2 * pi).animate(_controller);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +163,6 @@ class _HomePageState extends State<HomePage> {
           return const BaseLoading();
         }
         return Container(
-          height: 300,
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: 16.radius,
@@ -161,7 +177,63 @@ class _HomePageState extends State<HomePage> {
           ),
           margin: 16.padding,
           padding: 16.padding,
-          child: ChartOverview(list: myBloc.list),
+          child: Column(
+            children: [
+              ChartOverview(list: myBloc.list),
+              16.height,
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      if (myBloc.light)
+                        Assets.icons.lightOn.image(height: 50, width: 50)
+                      else
+                        Assets.icons.lightOff.image(height: 50, width: 50),
+                      SwitchButton(
+                          value: myBloc.light, onChanged: myBloc.setLight),
+                    ],
+                  ).expanded(),
+                  8.width,
+                  Column(
+                    children: [
+                      AnimatedBuilder(
+                        builder: (context, state) {
+                          return Transform(
+                              alignment: Alignment.center,
+                              transform: Matrix4.identity()
+                                ..rotateZ(_animation.value),
+                              child:
+                                  Assets.icons.fan.svg(height: 50, width: 50));
+                        },
+                        animation: _controller,
+                      ),
+                      SwitchButton(value: myBloc.fan, onChanged: (value) {
+                        myBloc.setFan(value);
+                        // stop animation
+                        if (!value) {
+                          _controller.stop();
+                        } else {
+                          _controller.repeat();
+                        }
+                      }),
+                    ],
+                  ).expanded(),
+                  8.width,
+                  Column(
+                    children: [
+                      if (myBloc.airConditioner)
+                        Assets.icons.airOn.svg(height: 50, width: 50)
+                      else
+                        Assets.icons.ariOff.svg(height: 50, width: 50),
+                      SwitchButton(
+                          value: myBloc.airConditioner,
+                          onChanged: myBloc.setAirConditioner),
+                    ],
+                  ).expanded(),
+                ],
+              )
+            ],
+          ),
         );
       },
     );

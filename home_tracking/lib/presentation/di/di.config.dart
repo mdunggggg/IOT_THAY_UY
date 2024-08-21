@@ -30,8 +30,8 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     gh.factory<_i942.EnvironmentConfig>(() => _i942.EnvironmentConfig());
-    gh.factory<_i715.AppRouter>(() => _i715.AppRouter());
     gh.factory<_i771.BaseDio>(() => _i771.BaseDio());
+    gh.factory<_i715.AppRouter>(() => _i715.AppRouter());
     gh.factory<_i295.DataSensorRepo>(
         () => _i295.DataSensorRepo(gh<_i771.BaseDio>()));
     gh.factory<_i722.HomeBloc>(
