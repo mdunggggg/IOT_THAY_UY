@@ -4,7 +4,7 @@ import 'package:injectable/injectable.dart';
 class EnvironmentConfig {
   // ignore: constant_identifier_names
   static const APP_NAME =
-  String.fromEnvironment('DART_DEFINES_APP_NAME', defaultValue: 'Karate');
+  String.fromEnvironment('DART_DEFINES_APP_NAME', defaultValue: 'home_tracking');
   static const BASE_URL_HTTP =
-  String.fromEnvironment('DART_DEFINES_BASE_URL_HTTP');
+  String.fromEnvironment('DART_DEFINES_BASE_URL_HTTP', defaultValue: 'http://localhost:8080/api/v1');
 }

@@ -13,6 +13,6 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class Status {
     @Enumerated
-    private ResponseCode code;
+    private int code;
     private String message;
 }
