@@ -1,6 +1,9 @@
 package com.mdung.be_iot.rest;
 
+import com.mdung.be_iot.entity.Action;
 import com.mdung.be_iot.mqtt_config.MqttGateway;
+import com.mdung.be_iot.service.ActionService;
+import com.mdung.be_iot.service.MqttService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -14,11 +17,13 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/mqtt")
 @Tag(name = "Mqtt broker", description = "API for mqtt")
 public class MqttController {
-    private MqttGateway mqttGateway;
+    private MqttService mqttService;
+    private ActionService actionService;
 
     @Autowired
-    public MqttController(MqttGateway mqttGateway) {
-        this.mqttGateway = mqttGateway;
+    public MqttController(MqttService mqttService, ActionService actionService) {
+        this.mqttService = mqttService;
+        this.actionService = actionService;
     }
 
     @GetMapping("/turn-on-off-light")
@@ -29,9 +34,10 @@ public class MqttController {
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"on", "off"})
             )
-            @RequestParam String message) {
+            @RequestParam String message, @RequestParam String deviceId) {
 
-        mqttGateway.sendToMqtt(message + " light");
+        mqttService.turnLight(message);
+        actionService.createAction(new Action(deviceId, "light", message, System.currentTimeMillis()));
         return "Message published!";
     }
 
@@ -43,9 +49,10 @@ public class MqttController {
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"on", "off"})
             )
-            @RequestParam String message) {
+            @RequestParam String message, @RequestParam String deviceId) {
 
-        mqttGateway.sendToMqtt(message + " fan");
+        mqttService.turnFan(message);
+        actionService.createAction(new Action(deviceId, "fan", message, System.currentTimeMillis()));
         return "Message published!";
     }
 
@@ -58,9 +65,10 @@ public class MqttController {
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"on", "off"})
             )
-            @RequestParam String message) {
+            @RequestParam String message, @RequestParam String deviceId) {
 
-        mqttGateway.sendToMqtt(message + " air-condition");
+        mqttService.turnAirConditioner(message);
+        actionService.createAction(new Action(deviceId, "air-conditioner", message, System.currentTimeMillis()));
         return "Message published!";
     }
 

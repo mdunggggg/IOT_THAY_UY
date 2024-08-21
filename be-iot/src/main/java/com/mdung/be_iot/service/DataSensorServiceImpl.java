@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -28,6 +29,7 @@ public class DataSensorServiceImpl implements DataSensorService {
     }
 
     @Override
+    @Transactional
     public DataSensor createDataSensor(DataSensor dataSensor) {
         return dataSensorRepository.save(dataSensor);
     }
