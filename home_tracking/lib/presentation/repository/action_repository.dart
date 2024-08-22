@@ -16,13 +16,21 @@ class ActionRepository {
   Future<BaseResponseModel<List<ActionModel>>> getActions({
     int? page,
     int? size,
+    String? appliance,
+    String? device,
+    String? search,
+    bool? isSort,
   }) async {
     try {
       final payload = {
         'page': page,
         'size': size,
+        'appliance': appliance,
+        'device': device,
+        'search': search,
+        'sort': isSort == null ? null : isSort ? 'asc' : 'desc',
       };
-      payload.removeWhere((key, value) => value == null);
+      payload.removeWhere((key, value) => value == null || value == '');
       final response = await _dio.get('actions/', data: payload);
       final data = (response.data['data']['elements'] as List);
       final List<ActionModel> actionModel =

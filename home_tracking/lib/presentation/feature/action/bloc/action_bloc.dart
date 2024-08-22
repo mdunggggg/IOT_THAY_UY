@@ -2,6 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:home_tracking/presentation/blocs/bloc_state.dart';
 import 'package:home_tracking/presentation/model/action_model.dart';
 import 'package:home_tracking/presentation/model/pagination_model.dart';
+import 'package:home_tracking/shared/extension/ext_num.dart';
+import 'package:home_tracking/utils/delay_callback.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../repository/action_repository.dart';
@@ -14,11 +16,29 @@ class ActionBloc extends Cubit<BlocState<List<ActionModel>>> {
 
   PaginationModel? pagination;
 
+  final DelayCallBack _delayCallBack = DelayCallBack(delay: 500.milliseconds);
+
   static const int size = 10;
   int page = 0;
 
   int indexDevice = 0;
   List<DeviceType> devices = DeviceType.values;
+
+  bool _isSort = false;
+  bool get isSort => _isSort;
+  void sort() {
+    _isSort = !_isSort;
+    getData();
+  }
+
+  String _search = '';
+  void setSearch(String search) {
+    _delayCallBack.debounce(() {
+      _search = search;
+      page = 0;
+      getData();
+    });
+  }
 
   void changeDevice(int? index) {
     indexDevice = index ?? 0;
@@ -35,7 +55,7 @@ class ActionBloc extends Cubit<BlocState<List<ActionModel>>> {
 
   Future<void> getData() async {
     emit(state.copyWith(status: Status.loading));
-    final res = await _actionRepository.getActions(page: page, size: size);
+    final res = await _actionRepository.getActions(page: page, size: size, appliance: devices[indexDevice].code, search: _search, isSort: _isSort);
     if (res.code == 200) {
       pagination = res.extra;
       emit(state.copyWith(status: Status.success, data: res.data));

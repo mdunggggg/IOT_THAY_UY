@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:home_tracking/presentation/components/loading.dart';
 import 'package:home_tracking/presentation/feature/action/bloc/action_bloc.dart';
 import 'package:home_tracking/presentation/feature/home/widget/app_input.dart';
+import 'package:home_tracking/presentation/feature/home/widget/item_row.dart';
 import 'package:home_tracking/shared/extension/ext_context.dart';
+import 'package:home_tracking/shared/extension/ext_date_time.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';
+import 'package:home_tracking/shared/style_text/style_text.dart';
 
 import '../../../../shared/colors/colors.dart';
 import '../../../blocs/bloc_state.dart';
@@ -65,6 +68,7 @@ class _ActionPageState extends State<ActionPage> {
           _buildDropdown(),
           16.height,
           _buiLdItems(),
+          16.height,
           _buildPaging(),
         ],
       ),
@@ -77,23 +81,31 @@ class _ActionPageState extends State<ActionPage> {
         AppInputSupport(
           hintText: 'Tìm kiếm',
           backgroundColor: Colors.white,
+          onChanged: myBloc.setSearch,
           prefixIcon: const Icon(Icons.search_rounded),
         ).expanded(),
         8.width,
-        Container(
-          width: sp48,
-          height: sp48,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(sp8),
-            border: Border.all(
-              color: borderColor_2,
-            ),
-          ),
-          child: const Icon(
-            Icons.filter_alt_outlined,
-            color: greyColor,
-          ),
+        BlocBuilder<ActionBloc, BlocState>(
+          builder: (context, state) {
+            return InkWell(
+              onTap: myBloc.sort,
+              child: Container(
+                width: sp48,
+                height: sp48,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(sp8),
+                  border: Border.all(
+                    color: myBloc.isSort ? Colors.green : Colors.grey,
+                  ),
+                ),
+                child:  Icon(
+                  Icons.filter_alt_outlined,
+                  color: myBloc.isSort ? Colors.green : Colors.grey,
+                ),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -148,8 +160,8 @@ class _ActionPageState extends State<ActionPage> {
   _buiLdItems() {
     return BlocBuilder<ActionBloc, BlocState<List<ActionModel>>>(
       builder: (context, state) {
-        if (state.status == Status.loading) {
-          return BaseLoading();
+        if (state.status == Status.loading && state.data == null) {
+          return const BaseLoading();
         }
         return ListView.separated(
           shrinkWrap: true,
@@ -157,7 +169,7 @@ class _ActionPageState extends State<ActionPage> {
           padding: EdgeInsets.zero,
           itemCount: state.data?.length ?? 0,
           itemBuilder: (context, index) {
-            return Text(state.data![index].appliance!);
+            return _itemView(state.data![index]);
           },
           separatorBuilder: (BuildContext context, int index) {
             return const Divider();
@@ -170,9 +182,9 @@ class _ActionPageState extends State<ActionPage> {
   _buildPaging() {
     return BlocBuilder<ActionBloc, BlocState<List<ActionModel>>>(
       builder: (context, state) {
-        if(state.status == Status.success){
+        if (state.status == Status.success) {
           final data = state.data ?? <ActionModel>[];
-          if(data.isEmpty){
+          if (data.isEmpty) {
             return Container();
           }
           return Row(
@@ -222,5 +234,56 @@ class _ActionPageState extends State<ActionPage> {
         return Container();
       },
     );
+  }
+
+  _itemView(ActionModel item) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          item.deviceId ?? 'Không có dữ liệu',
+          style: StyleApp.bold(),
+        ),
+        8.height,
+        ItemRow(title: 'Thiết bị', value: getName(item.appliance ?? '')),
+        ItemRow(
+          title: 'Thao tác',
+          value: getName(item.action ?? ''),
+          valueColor: colorText(item.action ?? ''),
+        ),
+        ItemRow(
+            title: 'Thời gian',
+            value: DateTime.fromMillisecondsSinceEpoch(item.time ?? 0)
+                .formatDefault),
+      ],
+    );
+  }
+
+  String getName(String code) {
+    switch (code) {
+      case 'light':
+        return 'Bóng đèn';
+      case 'fan':
+        return 'Quạt';
+      case 'air-conditioner':
+        return "Điều hòa";
+      case 'on':
+        return 'Bật';
+      case 'off':
+        return 'Tắt';
+      default:
+        return 'Unknown';
+    }
+  }
+
+  Color colorText(String code) {
+    switch (code) {
+      case 'on':
+        return Colors.green;
+      case 'off':
+        return Colors.red;
+      default:
+        return Colors.black;
+    }
   }
 }
