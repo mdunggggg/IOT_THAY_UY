@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
         HomeRoute(),
         ActionRoute(),
         HomeRoute(),
-        HomeRoute(),
+        ProfileRoute(),
       ],
       builder: (context, child) {
         final tabsRouter = context.tabsRouter;

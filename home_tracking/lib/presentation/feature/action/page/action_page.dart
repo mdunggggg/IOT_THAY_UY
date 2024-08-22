@@ -38,14 +38,29 @@ class _ActionPageState extends State<ActionPage> {
       lazy: false,
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const Text("Action"),
+          backgroundColor: const Color(0xFF05231F),
+          title:  Text("Action", style: StyleApp.bold(color: Colors.white),),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildTable(),
-            ],
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFF05231F),
+                const Color(0xFF05231F),
+                Colors.white,
+                Colors.white,
+
+              ],
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildTable(),
+              ],
+            ),
           ),
         ),
       ),

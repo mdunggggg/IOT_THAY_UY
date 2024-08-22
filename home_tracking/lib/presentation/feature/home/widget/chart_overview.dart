@@ -39,6 +39,9 @@ class _ChartOverviewState extends State<ChartOverview> {
           text: isCardView ? '' : 'Washington vs New York temperature'),
       legend: Legend(isVisible: isCardView),
       enableAxisAnimation: true,
+      zoomPanBehavior: ZoomPanBehavior(
+        enablePanning: true,
+      ),
 
       /// API for multiple axis. It can returns the various axis to the chart.
       axes: const <ChartAxis>[
@@ -51,17 +54,10 @@ class _ChartOverviewState extends State<ChartOverview> {
             maximum: 1050,
             interval: 100)
       ],
-      primaryXAxis: DateTimeAxis(
-        initialVisibleMaximum: DateTime.now(),
-        majorGridLines: const MajorGridLines(width: 0),
-        maximumLabels: 10,
-        minimum:DateTime.fromMillisecondsSinceEpoch(
-            widget.list[max(0, widget.list.length - 11)].time ?? 0),
-        maximum: DateTime.fromMillisecondsSinceEpoch(widget.list.last.time ?? 0),
-        intervalType: DateTimeIntervalType.minutes,
-        axisLabelFormatter: (AxisLabelRenderDetails details) {
-          return ChartAxisLabel(details.text, StyleApp.light());// convert to seconds
-        },
+      primaryXAxis: const CategoryAxis(
+        labelPlacement: LabelPlacement.onTicks,
+        autoScrollingDelta: 5,
+        autoScrollingMode: AutoScrollingMode.end,
       ),
       primaryYAxis: const NumericAxis(
         majorGridLines: MajorGridLines(width: 0),
@@ -78,26 +74,25 @@ class _ChartOverviewState extends State<ChartOverview> {
 
   /// Returns the list of chart series which need to
   /// render on the multiple axes chart.
-  List<CartesianSeries<DataSensorModel, DateTime>>
-      _getMultipleAxisLineSeries() {
-    return <CartesianSeries<DataSensorModel, DateTime>>[
-      LineSeries<DataSensorModel, DateTime>(
+  List<CartesianSeries<DataSensorModel, String>> _getMultipleAxisLineSeries() {
+    return <CartesianSeries<DataSensorModel, String>>[
+      LineSeries<DataSensorModel, String>(
           dataSource: widget.list,
-          xValueMapper: (DataSensorModel sales, _) =>
-              DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0),
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
           yValueMapper: (DataSensorModel sales, _) => sales.temperature ?? 0,
           name: 'Tempurature'),
-      LineSeries<DataSensorModel, DateTime>(
+      LineSeries<DataSensorModel, String>(
           dataSource: widget.list,
-          xValueMapper: (DataSensorModel sales, _) =>
-              DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0),
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
           yValueMapper: (DataSensorModel sales, _) => sales.humidity ?? 0,
           name: 'Humidity'),
-      LineSeries<DataSensorModel, DateTime>(
+      LineSeries<DataSensorModel, String>(
           dataSource: widget.list,
           yAxisName: 'yAxis1',
-          xValueMapper: (DataSensorModel sales, _) =>
-              DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0),
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
           yValueMapper: (DataSensorModel sales, _) => sales.light ?? 0,
           name: 'Light')
     ];
@@ -117,5 +112,4 @@ class _ChartOverviewState extends State<ChartOverview> {
     return DateFormat('HH:mm')
         .format(DateTime.fromMillisecondsSinceEpoch(milliseconds ?? 0));
   }
-
 }

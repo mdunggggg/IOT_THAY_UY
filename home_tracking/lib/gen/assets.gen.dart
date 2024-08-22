@@ -48,11 +48,15 @@ class $AssetsIconsGen {
 class $AssetsImagesGen {
   const $AssetsImagesGen();
 
+  /// File path: assets/images/bg_start.png
+  AssetGenImage get bgStart =>
+      const AssetGenImage('assets/images/bg_start.png');
+
   /// File path: assets/images/meme.jpg
   AssetGenImage get meme => const AssetGenImage('assets/images/meme.jpg');
 
   /// List of all assets
-  List<AssetGenImage> get values => [meme];
+  List<AssetGenImage> get values => [bgStart, meme];
 }
 
 class Assets {

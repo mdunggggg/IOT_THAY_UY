@@ -40,10 +40,10 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i715.AppRouter>(() => _i715.AppRouter());
     gh.factory<_i563.MqttRepository>(
         () => _i563.MqttRepository(gh<_i771.BaseDio>()));
-    gh.factory<_i295.DataSensorRepo>(
-        () => _i295.DataSensorRepo(gh<_i771.BaseDio>()));
     gh.factory<_i221.ActionRepository>(
         () => _i221.ActionRepository(gh<_i771.BaseDio>()));
+    gh.factory<_i295.DataSensorRepo>(
+        () => _i295.DataSensorRepo(gh<_i771.BaseDio>()));
     gh.factory<_i405.ActionBloc>(
         () => _i405.ActionBloc(gh<_i221.ActionRepository>()));
     gh.factory<_i722.HomeBloc>(() => _i722.HomeBloc(

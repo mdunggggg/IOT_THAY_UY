@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:auto_route/annotations.dart';
@@ -49,15 +50,29 @@ class _HomePageState extends State<HomePage>
       create: (context) => myBloc..getData(),
       lazy: false,
       child: Scaffold(
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              _buildHeader(),
-              16.height,
-              _buildOverview(),
-              16.height,
-              _buildChart(),
-            ],
+        body: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                const Color(0xFF05231F),
+                const Color(0xFF05231F),
+                Colors.white,
+                Colors.white,
+              ],
+            ),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildHeader(),
+                16.height,
+                _buildOverview(),
+                16.height,
+                _buildChart(),
+              ],
+            ),
           ),
         ),
       ),
@@ -232,7 +247,11 @@ class _HomePageState extends State<HomePage>
                   ).expanded(),
                 ],
               ),
-              OutlinedButton(onPressed: myBloc.add, child: Text("Add")),
+              OutlinedButton(onPressed: () {
+                Timer.periodic(Duration(milliseconds: 2000), (timer) {
+                  myBloc.add();
+                });
+              }, child: Text("Add")),
             ],
           ),
         );
