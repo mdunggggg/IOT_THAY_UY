@@ -5,7 +5,7 @@ import com.mdung.be_iot.entity.DataSensor;
 
 
 public interface DataSensorService {
-    Pagination getAllDataSensors(int page, int size, String search, String type);
+    Pagination getAllDataSensors(int page, int size, String search, String type, String sortType);
 
     DataSensor createDataSensor(DataSensor dataSensor);
 }

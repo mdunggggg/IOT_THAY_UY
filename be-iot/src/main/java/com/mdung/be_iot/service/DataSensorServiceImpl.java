@@ -24,11 +24,14 @@ public class DataSensorServiceImpl implements DataSensorService {
     }
 
     @Override
-    public Pagination getAllDataSensors(int page, int size, String search, String type) {
+    public Pagination getAllDataSensors(int page, int size, String search, String type, String sortType) {
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<DataSensor> specification = Specification.where(null);
         try {
+            if(sortType != null){
+                specification = specification.and(buildSpecification(sortType));
+            }
             if (search != null && type != null && !type.equals("all")) {
                 specification = specification.and((root, query, criteriaBuilder) ->
                         criteriaBuilder.equal(root.get(type), search));
@@ -47,6 +50,7 @@ public class DataSensorServiceImpl implements DataSensorService {
                         criteriaBuilder.equal(root.get("light"), search))
                 );
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -58,6 +62,54 @@ public class DataSensorServiceImpl implements DataSensorService {
     @Transactional
     public DataSensor createDataSensor(DataSensor dataSensor) {
         return dataSensorRepository.save(dataSensor);
+    }
+
+    public Specification<DataSensor> buildSpecification(String sortType) {
+        Specification<DataSensor> specification = Specification.where(null);
+
+        if (sortType != null) {
+            switch (sortType) {
+                case "temp":
+                    specification = specification.and(sortBy("temperature", true));
+                    break;
+                case "-temp":
+                    specification = specification.and(sortBy("temperature", false));
+                    break;
+                case "humidity":
+                    specification = specification.and(sortBy("humidity", true));
+                    break;
+                case "-humidity":
+                    specification = specification.and(sortBy("humidity", false));
+                    break;
+                case "light":
+                    specification = specification.and(sortBy("light", true));
+                    break;
+                case "-light":
+                    specification = specification.and(sortBy("light", false));
+                    break;
+                case "time":
+                    specification = specification.and(sortBy("time", true));
+                    break;
+                case "-time":
+                    specification = specification.and(sortBy("time", false));
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid sort type: " + sortType);
+            }
+        }
+
+        return specification;
+    }
+
+    private Specification<DataSensor> sortBy(String field, boolean ascending) {
+        return (root, query, criteriaBuilder) -> {
+            if (ascending) {
+                query.orderBy(criteriaBuilder.asc(root.get(field)));
+            } else {
+                query.orderBy(criteriaBuilder.desc(root.get(field)));
+            }
+            return criteriaBuilder.conjunction();
+        };
     }
 
 

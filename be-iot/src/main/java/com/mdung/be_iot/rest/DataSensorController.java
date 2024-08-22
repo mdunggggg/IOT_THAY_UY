@@ -37,10 +37,16 @@ public class DataSensorController {
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"all", "temperature", "humidity", "light"})
             )
-            @RequestParam(required = false) String type
+            @RequestParam(required = false) String type,
+            @Parameter(
+                    description = "Sort by type",
+                    in = ParameterIn.QUERY,
+                    schema = @Schema(allowableValues = {"temp", "-temp", "humidity", "-humidity", "light", "-light", "time", "-time"})
+            )
+            @RequestParam(defaultValue = "time") String sortType
     ) {
         return BaseResponse.success(
-                dataSensorService.getAllDataSensors(page, size, search, type)
+                dataSensorService.getAllDataSensors(page, size, search, type, sortType)
         );
     }
 
