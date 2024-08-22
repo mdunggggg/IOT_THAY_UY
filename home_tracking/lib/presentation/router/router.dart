@@ -14,8 +14,8 @@ class AppRouter extends $AppRouter{
     AutoRoute(page: MainRoute.page, children: [
       CustomRoute(page: HomeRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
       CustomRoute(page: ActionRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
+      CustomRoute(page: DataRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
       CustomRoute(page: ProfileRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
-      CustomRoute(page: HomeRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
     ]),
   ];
 

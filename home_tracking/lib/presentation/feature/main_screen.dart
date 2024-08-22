@@ -18,7 +18,7 @@ class _MainScreenState extends State<MainScreen> {
       routes: const [
         HomeRoute(),
         ActionRoute(),
-        HomeRoute(),
+        DataRoute(),
         ProfileRoute(),
       ],
       builder: (context, child) {

@@ -13,28 +13,35 @@ class DataSensorRepo {
 
   final BaseDio _dio;
 
-  Future<BaseResponseModel<List<DataSensorModel>>> getDataSensors(
-      {int? page, int? size}) async {
+  Future<BaseResponseModel<List<DataSensorModel>>> getDataSensors({
+    int? page,
+    int? size,
+    String? search,
+    String? type,
+    String? sortType,
+  }) async {
     try {
       final payload = {
         'page': page,
-        'size': 100,
+        'size': size,
+        'search': search,
+        'type': type,
+        'sortType': sortType,
       };
-      payload.removeWhere((key, value) => value == null);
+      payload.removeWhere((key, value) => value == null || value == '');
       final response = await _dio.get("data-sensors/", data: payload);
       final data = (response.data['data']['elements'] as List);
       final List<DataSensorModel> dataSensors =
           data.map((e) => DataSensorModel.fromJson(e)).toList();
       return BaseResponseModel(
-        code: response.data['status']['code'],
-        message: response.data['status']['message'],
-        data: dataSensors,
-        extra: PaginationModel(
-          page: response.data['data']['page'],
-          totalElements: response.data['data']['totalElements'],
-          totalPages: response.data['data']['totalPages'],
-        )
-      );
+          code: response.data['status']['code'],
+          message: response.data['status']['message'],
+          data: dataSensors,
+          extra: PaginationModel(
+            page: response.data['data']['page'],
+            totalElements: response.data['data']['totalElements'],
+            totalPages: response.data['data']['totalPages'],
+          ));
     } catch (e) {
       log('Error getDataSensors: $e');
       return BaseResponseModel(code: 500, message: e.toString(), data: []);
