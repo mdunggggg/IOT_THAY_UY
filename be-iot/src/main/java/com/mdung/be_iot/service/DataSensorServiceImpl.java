@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 
 @Service
@@ -22,9 +24,27 @@ public class DataSensorServiceImpl implements DataSensorService {
     }
 
     @Override
-    public Pagination getAllDataSensors(int page, int size) {
+    public Pagination getAllDataSensors(int page, int size, String search, String type) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<DataSensor> dataSensors = dataSensorRepository.findAll(pageable);
+
+        Specification<DataSensor> specification = Specification.where(null);
+        try {
+            if (search != null && type != null && !type.equals("all")) {
+                specification = specification.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.equal(root.get(type), search));
+            }
+
+            if (type == null || type.equals("all")) {
+                specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get("temperature"), search),
+                        criteriaBuilder.equal(root.get("humidity"), search),
+                        criteriaBuilder.equal(root.get("light"), search))
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Page<DataSensor> dataSensors = dataSensorRepository.findAll(specification, pageable);
         return new Pagination(dataSensors.getNumber(), dataSensors.getTotalElements(), dataSensors.getTotalPages(), dataSensors.getContent());
     }
 
