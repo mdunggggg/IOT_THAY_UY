@@ -28,14 +28,12 @@ class _ChartOverviewState extends State<ChartOverview> {
 
   @override
   Widget build(BuildContext context) {
-    for (int i = 0; i < widget.list.length; i++) {
-      print('list[i]: ${widget.list[i].toJson()}');
-    }
     return _buildMultipleAxisLineChart();
   }
 
   /// Returns the chart with multiple axes.
   SfCartesianChart _buildMultipleAxisLineChart() {
+    print(widget.list.length);
     return SfCartesianChart(
       title: ChartTitle(
           text: isCardView ? '' : 'Washington vs New York temperature'),
@@ -54,6 +52,7 @@ class _ChartOverviewState extends State<ChartOverview> {
             interval: 100)
       ],
       primaryXAxis: DateTimeAxis(
+        initialVisibleMaximum: DateTime.now(),
         majorGridLines: const MajorGridLines(width: 0),
         maximumLabels: 10,
         minimum:DateTime.fromMillisecondsSinceEpoch(

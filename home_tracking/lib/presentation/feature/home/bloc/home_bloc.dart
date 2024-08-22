@@ -37,7 +37,6 @@ class HomeBloc extends Cubit<BlocState<List<DataSensorModel>>> {
       humidity: rnd.nextDouble() * 100,
       light: rnd.nextDouble() * 1024,
     );
-   // newList.removeAt(1);
     newList.add(newD);
 
     list = newList;

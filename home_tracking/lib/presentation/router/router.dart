@@ -13,7 +13,7 @@ class AppRouter extends $AppRouter{
   List<AutoRoute> get routes => [
     AutoRoute(page: MainRoute.page, children: [
       CustomRoute(page: HomeRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
-      CustomRoute(page: HomeRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
+      CustomRoute(page: ActionRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
       CustomRoute(page: HomeRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
       CustomRoute(page: HomeRoute.page, transitionsBuilder: TransitionsBuilders.fadeIn),
     ]),

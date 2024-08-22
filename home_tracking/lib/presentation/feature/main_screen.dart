@@ -17,7 +17,7 @@ class _MainScreenState extends State<MainScreen> {
     return AutoTabsRouter(
       routes: const [
         HomeRoute(),
-        HomeRoute(),
+        ActionRoute(),
         HomeRoute(),
         HomeRoute(),
       ],

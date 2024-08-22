@@ -37,7 +37,7 @@ class DataSensorRepo {
       );
     } catch (e) {
       log('Error getDataSensors: $e');
-      return BaseResponseModel(code: 500, message: e.toString(), data: null);
+      return BaseResponseModel(code: 500, message: e.toString(), data: []);
     }
   }
 }
