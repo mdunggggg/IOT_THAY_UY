@@ -4,8 +4,13 @@ import com.mdung.be_iot.base.BaseResponse;
 import com.mdung.be_iot.base.Pagination;
 import com.mdung.be_iot.service.ActionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -25,9 +30,18 @@ public class ActionController {
     @GetMapping("/")
     @Operation(summary = "Get all actions")
     public BaseResponse<Pagination> getAllActions(@RequestParam(value = "page", defaultValue = "0") int page,
-                                                  @RequestParam(value = "size", defaultValue = "10") int size) {
+                                                  @RequestParam(value = "size", defaultValue = "10") int size, @RequestParam(required = false) String appliance,
+                                                  @RequestParam(required = false) String search,
+                                                  @Parameter(
+                                                          description = "Sort by time",
+                                                          in = ParameterIn.QUERY,
+                                                          schema = @Schema(allowableValues = {"asc", "desc"})
+                                                  )
+                                                  @RequestParam String sort) {
+        Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, "time"));
         return BaseResponse.success(
-                actionService.getAllActions(page, size)
+                actionService.getAllActions(appliance, search, pageable)
         );
     }
 }

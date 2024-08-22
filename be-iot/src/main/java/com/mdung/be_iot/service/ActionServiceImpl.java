@@ -5,8 +5,8 @@ import com.mdung.be_iot.entity.Action;
 import com.mdung.be_iot.repository.ActionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,9 +28,22 @@ public class ActionServiceImpl implements ActionService{
     }
 
     @Override
-    public Pagination getAllActions(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Action> actions = actionRepository.findAll(pageable);
-        return new Pagination(actions.getNumber(), actions.getTotalElements(), actions.getTotalPages(), actions.getContent());
+    public Pagination getAllActions(String appliance, String search, Pageable pageable) {
+        Specification<Action> specification = Specification.where(null);
+
+        if (appliance != null && !appliance.isEmpty()) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("appliance"), "%" + appliance + "%"));
+        }
+
+        if (search != null && !search.isEmpty()) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.like(root.get("action"), "%" + search + "%"));
+        }
+
+        Page<Action> actions = actionRepository.findAll(specification, pageable);
+        return new Pagination<>(actions.getNumber(), actions.getTotalElements(), actions.getTotalPages(), actions.getContent());
+
     }
+
 }
