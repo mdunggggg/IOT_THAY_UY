@@ -33,8 +33,14 @@ public class DataSensorServiceImpl implements DataSensorService {
                 specification = specification.and((root, query, criteriaBuilder) ->
                         criteriaBuilder.equal(root.get(type), search));
             }
-
-            if (type == null || type.equals("all")) {
+            if (search != null && type != null && type.equals("all")) {
+                specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.or(
+                        criteriaBuilder.equal(root.get("temperature"), search),
+                        criteriaBuilder.equal(root.get("humidity"), search),
+                        criteriaBuilder.equal(root.get("light"), search))
+                );
+            }
+            if(search != null && type == null){
                 specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.or(
                         criteriaBuilder.equal(root.get("temperature"), search),
                         criteriaBuilder.equal(root.get("humidity"), search),

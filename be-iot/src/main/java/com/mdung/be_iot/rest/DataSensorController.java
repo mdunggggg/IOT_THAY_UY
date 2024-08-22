@@ -37,7 +37,7 @@ public class DataSensorController {
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"all", "temperature", "humidity", "light"})
             )
-            @RequestParam String type
+            @RequestParam(required = false) String type
     ) {
         return BaseResponse.success(
                 dataSensorService.getAllDataSensors(page, size, search, type)
