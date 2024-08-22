@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-public class ActionServiceImpl implements ActionService{
+public class ActionServiceImpl implements ActionService {
 
     private ActionRepository actionRepository;
 
@@ -38,7 +38,10 @@ public class ActionServiceImpl implements ActionService{
 
         if (search != null && !search.isEmpty()) {
             specification = specification.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("action"), "%" + search + "%"));
+                    criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("action"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("appliance"), "%" + search + "%")
+                    ));
         }
 
         Page<Action> actions = actionRepository.findAll(specification, pageable);

@@ -38,7 +38,7 @@ public class ActionController {
                   in = ParameterIn.QUERY,
                   schema = @Schema(allowableValues = {"desc", "asc"})
             )
-            @RequestParam String sort)
+            @RequestParam(defaultValue = "desc") String sort)
     {
         Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, "time"));
