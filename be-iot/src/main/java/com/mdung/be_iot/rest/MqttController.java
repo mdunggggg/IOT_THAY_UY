@@ -1,7 +1,6 @@
 package com.mdung.be_iot.rest;
 
 import com.mdung.be_iot.entity.Action;
-import com.mdung.be_iot.mqtt_config.MqttGateway;
 import com.mdung.be_iot.service.ActionService;
 import com.mdung.be_iot.service.MqttService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +8,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,30 +27,32 @@ public class MqttController {
     @GetMapping("/turn-on-off-light")
     @Operation(summary = "Publish message to mqtt")
     public String changeLight(
+            @RequestParam String deviceId,
             @Parameter(
                     description = "The action to perform on the light",
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"on", "off"})
             )
-            @RequestParam String message, @RequestParam String deviceId) {
-
-        mqttService.turnLight(message);
-        actionService.createAction(new Action(deviceId, "light", message, System.currentTimeMillis()));
+            @RequestParam String actionCode) {
+        String action = actionCode.equals("on") ? "Bật" : "Tắt";
+       // mqttService.turnLight(actionCode);
+        actionService.createAction(new Action(deviceId, "Đèn", "light", action, actionCode, System.currentTimeMillis()));
         return "Message published!";
     }
 
     @GetMapping("/turn-on-off-fan")
     @Operation(summary = "Publish message to mqtt")
     public String changeFan(
+            @RequestParam String deviceId,
             @Parameter(
-                    description = "The action to perform on the fan",
+                    description = "The action to perform on the light",
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"on", "off"})
             )
-            @RequestParam String message, @RequestParam String deviceId) {
-
-        mqttService.turnFan(message);
-        actionService.createAction(new Action(deviceId, "fan", message, System.currentTimeMillis()));
+            @RequestParam String actionCode) {
+        String action = actionCode.equals("on") ? "Bật" : "Tắt";
+       // mqttService.turnFan(actionCode);
+        actionService.createAction(new Action(deviceId, "Quạt", "fan", action, actionCode, System.currentTimeMillis()));
         return "Message published!";
     }
 
@@ -60,19 +60,18 @@ public class MqttController {
     @GetMapping("/turn-on-off-air-condition")
     @Operation(summary = "Publish message to mqtt")
     public String changeAirCondition(
+            @RequestParam String deviceId,
             @Parameter(
-                    description = "The action to perform on the air-condition",
+                    description = "The action to perform on the light",
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"on", "off"})
             )
-            @RequestParam String message, @RequestParam String deviceId) {
-
-        mqttService.turnAirConditioner(message);
-        actionService.createAction(new Action(deviceId, "air-conditioner", message, System.currentTimeMillis()));
+            @RequestParam String actionCode) {
+        String action = actionCode.equals("on") ? "Bật" : "Tắt";
+     //   mqttService.turnAirConditioner(actionCode);
+        actionService.createAction(new Action(deviceId, "Điều hoà", "air_condition", action, actionCode, System.currentTimeMillis()));
         return "Message published!";
     }
-
-
 
 
 }

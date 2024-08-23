@@ -31,16 +31,22 @@ public class ActionServiceImpl implements ActionService {
     public Pagination getAllActions(String appliance, String search, Pageable pageable) {
         Specification<Action> specification = Specification.where(null);
 
-        if (appliance != null && !appliance.isEmpty()) {
+        if (appliance != null) {
             specification = specification.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.like(root.get("appliance"), "%" + appliance + "%"));
+                    criteriaBuilder.or(
+                            criteriaBuilder.like(root.get("appliance"), "%" + appliance + "%"),
+                            criteriaBuilder.like(root.get("applianceCode"), "%" + appliance + "%")
+                    )
+            );
         }
-
-        if (search != null && !search.isEmpty()) {
+        if (search != null) {
             specification = specification.and((root, query, criteriaBuilder) ->
                     criteriaBuilder.or(
                             criteriaBuilder.like(root.get("action"), "%" + search + "%"),
-                            criteriaBuilder.like(root.get("appliance"), "%" + search + "%")
+                            criteriaBuilder.like(root.get("appliance"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("actionCode"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("applianceCode"), "%" + search + "%"),
+                            criteriaBuilder.like(root.get("deviceId"), "%" + search + "%")
                     ));
         }
 
