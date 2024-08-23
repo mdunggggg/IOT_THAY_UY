@@ -19,8 +19,65 @@ class ChartOverview extends StatefulWidget {
 }
 
 class _ChartOverviewState extends State<ChartOverview> {
+  late TooltipBehavior _tooltipBehavior;
+  late ZoomPanBehavior _zoomPanBehavior;
+
   @override
   void initState() {
+    _tooltipBehavior = TooltipBehavior(
+      enable: true,
+      activationMode: ActivationMode.singleTap,
+      builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
+          int seriesIndex) {
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: const Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Time: ${convertToTime(data.time)}',
+                style: StyleApp.bold(color: Colors.black),
+              ),
+              if(seriesIndex == 0)
+                Text(
+                  'Temperature: ${data.temperature}°C',
+                  style: StyleApp.bold(color: Colors.black),
+                ),
+              if(seriesIndex == 1)
+                Text(
+                  'Humidity: ${data.humidity}%',
+                  style: StyleApp.bold(color: Colors.black),
+                ),
+              if(seriesIndex == 2)
+                Text(
+                  'Light: ${data.light} lux',
+                  style: StyleApp.bold(color: Colors.black),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+    _zoomPanBehavior = ZoomPanBehavior(
+      // Enables pinch zooming
+        enablePinching: true,
+        enableDoubleTapZooming: true,
+        enableSelectionZooming: true,
+        selectionRectBorderColor: Colors.red,
+        selectionRectBorderWidth: 1,
+        selectionRectColor: Colors.grey
+    );
     super.initState();
   }
 
@@ -39,11 +96,8 @@ class _ChartOverviewState extends State<ChartOverview> {
           text: isCardView ? '' : 'Washington vs New York temperature'),
       legend: Legend(isVisible: isCardView),
       enableAxisAnimation: true,
-      zoomPanBehavior: ZoomPanBehavior(
-        enablePanning: true,
-      ),
-
-      /// API for multiple axis. It can returns the various axis to the chart.
+      zoomPanBehavior:  _zoomPanBehavior,
+      enableSideBySideSeriesPlacement: true,
       axes: const <ChartAxis>[
         NumericAxis(
             opposedPosition: true,
@@ -68,7 +122,8 @@ class _ChartOverviewState extends State<ChartOverview> {
         maximumLabels: 10,
       ),
       series: _getMultipleAxisLineSeries(),
-      tooltipBehavior: TooltipBehavior(enable: true),
+      tooltipBehavior: _tooltipBehavior,
+
     );
   }
 
@@ -77,24 +132,30 @@ class _ChartOverviewState extends State<ChartOverview> {
   List<CartesianSeries<DataSensorModel, String>> _getMultipleAxisLineSeries() {
     return <CartesianSeries<DataSensorModel, String>>[
       LineSeries<DataSensorModel, String>(
-          dataSource: widget.list,
-          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
-              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
-          yValueMapper: (DataSensorModel sales, _) => sales.temperature ?? 0,
-          name: 'Tempurature'),
+        dataSource: widget.list,
+        xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+            .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+        yValueMapper: (DataSensorModel sales, _) => sales.temperature ?? 0,
+        name: 'Tempurature',
+        enableTooltip: true,
+      ),
       LineSeries<DataSensorModel, String>(
-          dataSource: widget.list,
-          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
-              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
-          yValueMapper: (DataSensorModel sales, _) => sales.humidity ?? 0,
-          name: 'Humidity'),
+        dataSource: widget.list,
+        xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+            .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+        yValueMapper: (DataSensorModel sales, _) => sales.humidity ?? 0,
+        name: 'Humidity',
+        enableTooltip: true,
+      ),
       LineSeries<DataSensorModel, String>(
-          dataSource: widget.list,
-          yAxisName: 'yAxis1',
-          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
-              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
-          yValueMapper: (DataSensorModel sales, _) => sales.light ?? 0,
-          name: 'Light')
+        dataSource: widget.list,
+        yAxisName: 'yAxis1',
+        xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+            .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+        yValueMapper: (DataSensorModel sales, _) => sales.light ?? 0,
+        name: 'Light',
+        enableTooltip: true,
+      )
     ];
   }
 
@@ -109,7 +170,7 @@ class _ChartOverviewState extends State<ChartOverview> {
   }
 
   String convertToTime(int? milliseconds) {
-    return DateFormat('HH:mm')
+    return DateFormat('dd/MM/yyyy hh:mm:ss')
         .format(DateTime.fromMillisecondsSinceEpoch(milliseconds ?? 0));
   }
 }

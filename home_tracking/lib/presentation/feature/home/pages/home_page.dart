@@ -248,7 +248,7 @@ class _HomePageState extends State<HomePage>
                 ],
               ),
               OutlinedButton(onPressed: () {
-                Timer.periodic(Duration(milliseconds: 2000), (timer) {
+                Timer.periodic(Duration(milliseconds: 5000), (timer) {
                   myBloc.add();
                 });
               }, child: Text("Add")),
