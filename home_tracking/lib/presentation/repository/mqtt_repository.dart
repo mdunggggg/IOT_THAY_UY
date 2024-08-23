@@ -9,7 +9,7 @@ class MqttRepository {
   Future changeFan(bool value) async {
     try {
       final payload = {
-        'message': value ? 'on' : 'off',
+        'actionCode': value ? 'on' : 'off',
         'deviceId': 'IPhone 15 Pro'
       };
       await _dio.get('mqtt/turn-on-off-fan', data: payload);
@@ -22,7 +22,7 @@ class MqttRepository {
   Future changeLight(bool value) async {
     try {
       final payload = {
-        'message': value ? 'on' : 'off',
+        'actionCode': value ? 'on' : 'off',
         'deviceId': 'IPhone 15 Pro'
       };
       await _dio.get('mqtt/turn-on-off-light', data: payload);
@@ -35,7 +35,7 @@ class MqttRepository {
   Future changeAirConditioner(bool value) async {
     try {
       final payload = {
-        'message': value ? 'on' : 'off',
+        'actionCode': value ? 'on' : 'off',
         'deviceId': 'IPhone 15 Pro'
       };
       await _dio.get('mqtt/turn-on-off-air-condition', data: payload);

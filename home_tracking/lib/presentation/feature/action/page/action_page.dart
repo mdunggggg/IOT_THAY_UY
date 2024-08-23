@@ -260,10 +260,10 @@ class _ActionPageState extends State<ActionPage> {
           style: StyleApp.bold(),
         ),
         8.height,
-        ItemRow(title: 'Thiết bị', value: getName(item.appliance ?? '')),
+        ItemRow(title: 'Thiết bị', value: item.appliance ?? 'Không có dữ liệu'),
         ItemRow(
           title: 'Thao tác',
-          value: getName(item.action ?? ''),
+          value: item.action ?? 'Không có dữ liệu',
           valueColor: colorText(item.action ?? ''),
         ),
         ItemRow(
@@ -272,23 +272,6 @@ class _ActionPageState extends State<ActionPage> {
                 .formatDefault),
       ],
     );
-  }
-
-  String getName(String code) {
-    switch (code) {
-      case 'light':
-        return 'Bóng đèn';
-      case 'fan':
-        return 'Quạt';
-      case 'air-conditioner':
-        return "Điều hòa";
-      case 'on':
-        return 'Bật';
-      case 'off':
-        return 'Tắt';
-      default:
-        return 'Unknown';
-    }
   }
 
   Color colorText(String code) {

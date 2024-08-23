@@ -69,7 +69,7 @@ enum DeviceType {
   all(""),
   light("light"),
   fan("fan"),
-  airConditioner("air_conditioner"),;
+  airConditioner("air_condition"),;
 
   const DeviceType(this.code);
   final String code;
