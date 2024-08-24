@@ -15,6 +15,8 @@ import 'package:home_tracking/presentation/feature/action/bloc/action_bloc.dart'
     as _i405;
 import 'package:home_tracking/presentation/feature/data/bloc/data_bloc.dart'
     as _i430;
+import 'package:home_tracking/presentation/feature/home/bloc/chart_bloc.dart'
+    as _i200;
 import 'package:home_tracking/presentation/feature/home/bloc/home_bloc.dart'
     as _i722;
 import 'package:home_tracking/presentation/repository/action_repository.dart'
@@ -48,6 +50,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i295.DataSensorRepo(gh<_i771.BaseDio>()));
     gh.factory<_i430.DataBloc>(
         () => _i430.DataBloc(gh<_i295.DataSensorRepo>()));
+    gh.factory<_i200.ChartBloc>(
+        () => _i200.ChartBloc(gh<_i295.DataSensorRepo>()));
     gh.factory<_i405.ActionBloc>(
         () => _i405.ActionBloc(gh<_i221.ActionRepository>()));
     gh.factory<_i722.HomeBloc>(() => _i722.HomeBloc(

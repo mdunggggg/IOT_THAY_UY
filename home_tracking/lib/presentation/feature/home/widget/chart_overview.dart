@@ -1,8 +1,9 @@
-import 'dart:math';
+import 'dart:async';
 
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:home_tracking/shared/extension/ext_date_time.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:home_tracking/presentation/blocs/bloc_state.dart';
+import 'package:home_tracking/presentation/feature/home/bloc/chart_bloc.dart';
 import 'package:home_tracking/shared/style_text/style_text.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -10,9 +11,10 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../model/data_sensor_model.dart';
 
 class ChartOverview extends StatefulWidget {
-  const ChartOverview({super.key, required this.list});
+  const ChartOverview({super.key, required this.bloc});
 
-  final List<DataSensorModel> list;
+  final ChartBloc bloc;
+
 
   @override
   State<ChartOverview> createState() => _ChartOverviewState();
@@ -26,7 +28,6 @@ class _ChartOverviewState extends State<ChartOverview> {
   void initState() {
     _tooltipBehavior = TooltipBehavior(
       enable: true,
-      activationMode: ActivationMode.singleTap,
       builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
           int seriesIndex) {
         return Container(
@@ -78,6 +79,10 @@ class _ChartOverviewState extends State<ChartOverview> {
         selectionRectBorderWidth: 1,
         selectionRectColor: Colors.grey
     );
+
+    Timer.periodic(Duration(seconds: 6), (timer) {
+      widget.bloc.getData();
+    });
     super.initState();
   }
 
@@ -85,18 +90,21 @@ class _ChartOverviewState extends State<ChartOverview> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildMultipleAxisLineChart();
+    return BlocBuilder<ChartBloc, BlocState>(
+      builder: (context, state) {
+        return _buildMultipleAxisLineChart();
+      },
+    );
   }
 
   /// Returns the chart with multiple axes.
   SfCartesianChart _buildMultipleAxisLineChart() {
-    print(widget.list.length);
     return SfCartesianChart(
       title: ChartTitle(
           text: isCardView ? '' : 'Washington vs New York temperature'),
       legend: Legend(isVisible: isCardView),
       enableAxisAnimation: true,
-      zoomPanBehavior:  _zoomPanBehavior,
+      zoomPanBehavior: _zoomPanBehavior,
       enableSideBySideSeriesPlacement: true,
       axes: const <ChartAxis>[
         NumericAxis(
@@ -132,26 +140,29 @@ class _ChartOverviewState extends State<ChartOverview> {
   List<CartesianSeries<DataSensorModel, String>> _getMultipleAxisLineSeries() {
     return <CartesianSeries<DataSensorModel, String>>[
       LineSeries<DataSensorModel, String>(
-        dataSource: widget.list,
-        xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
-            .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+        dataSource: widget.bloc.list,
+        xValueMapper: (DataSensorModel sales, _) =>
+            DateFormat('hh:mm:ss')
+                .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
         yValueMapper: (DataSensorModel sales, _) => sales.temperature ?? 0,
         name: 'Tempurature',
         enableTooltip: true,
       ),
       LineSeries<DataSensorModel, String>(
-        dataSource: widget.list,
-        xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
-            .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+        dataSource: widget.bloc.list,
+        xValueMapper: (DataSensorModel sales, _) =>
+            DateFormat('hh:mm:ss')
+                .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
         yValueMapper: (DataSensorModel sales, _) => sales.humidity ?? 0,
         name: 'Humidity',
         enableTooltip: true,
       ),
       LineSeries<DataSensorModel, String>(
-        dataSource: widget.list,
+        dataSource: widget.bloc.list,
         yAxisName: 'yAxis1',
-        xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
-            .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+        xValueMapper: (DataSensorModel sales, _) =>
+            DateFormat('hh:mm:ss')
+                .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
         yValueMapper: (DataSensorModel sales, _) => sales.light ?? 0,
         name: 'Light',
         enableTooltip: true,
@@ -159,11 +170,6 @@ class _ChartOverviewState extends State<ChartOverview> {
     ];
   }
 
-  @override
-  void dispose() {
-    widget.list.clear();
-    super.dispose();
-  }
 
   int convertToSeconds(int? milliseconds) {
     return (milliseconds ?? 0) ~/ 1000;

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:dio_smart_retry/dio_smart_retry.dart';
 import 'package:injectable/injectable.dart';
 
 import '../shared_data/app_shared_preference.dart';
@@ -34,16 +33,16 @@ class BaseDio {
       [
         ApiInterceptor(),
         PrettyDioLogger(requestBody: true),
-        RetryInterceptor(
-          dio: dio,
-          retries: 3,
-          logPrint: print,
-          retryDelays: [
-            const Duration(seconds: 1),
-            const Duration(seconds: 2),
-            const Duration(seconds: 3),
-          ],
-        ),
+        // RetryInterceptor(
+        //   dio: dio,
+        //   retries: 3,
+        //   logPrint: print,
+        //   retryDelays: [
+        //     const Duration(seconds: 1),
+        //     const Duration(seconds: 2),
+        //     const Duration(seconds: 3),
+        //   ],
+        // ),
       ],
     );
     return dio;

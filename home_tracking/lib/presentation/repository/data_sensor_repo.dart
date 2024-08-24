@@ -47,4 +47,28 @@ class DataSensorRepo {
       return BaseResponseModel(code: 500, message: e.toString(), data: []);
     }
   }
+
+  Future<BaseResponseModel<List<DataSensorModel>>> getByLastId({
+    int? lastId,
+    int? size,
+  }) async {
+    try {
+      final payload = {
+        'lastId': lastId,
+        'size': size,
+      };
+      payload.removeWhere((key, value) => value == null || value == '');
+      final response = await _dio.get("data-sensors/dashboard", data: payload);
+      return BaseResponseModel(
+        code: response.data['status']['code'],
+        message: response.data['status']['message'],
+        data: (response.data['data'] as List)
+            .map((e) => DataSensorModel.fromJson(e))
+            .toList(),
+      );
+    }
+    catch(e) {
+      return BaseResponseModel(code: 500, message: e.toString(), data: []);
+    }
+  }
 }

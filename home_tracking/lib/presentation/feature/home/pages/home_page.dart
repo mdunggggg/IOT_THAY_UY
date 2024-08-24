@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math';
 
 import 'package:auto_route/annotations.dart';
@@ -16,6 +15,7 @@ import 'package:home_tracking/shared/style_text/style_text.dart';
 
 import '../../../../gen/assets.gen.dart';
 import '../../../di/di.dart';
+import '../bloc/chart_bloc.dart';
 import '../widget/item_overview.dart';
 
 @RoutePage()
@@ -29,6 +29,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final myBloc = getIt.get<HomeBloc>();
+  final chartBloc = getIt.get<ChartBloc>();
 
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -41,14 +42,23 @@ class _HomePageState extends State<HomePage>
     );
 
     _animation = Tween<double>(begin: 0, end: 2 * pi).animate(_controller);
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => myBloc..getData(),
-      lazy: false,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => myBloc..getData(),
+          lazy: false,
+        ),
+        BlocProvider(
+          create: (context) => chartBloc..getData(),
+          lazy: false,
+        ),
+      ],
       child: Scaffold(
         body: Container(
           decoration: BoxDecoration(
@@ -117,7 +127,7 @@ class _HomePageState extends State<HomePage>
             16.width,
             BaseCacheImage(
               url:
-                  "https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg",
+              "https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg",
               borderRadius: 8.radius,
             ).size(height: 100, width: 100)
           ],
@@ -127,9 +137,9 @@ class _HomePageState extends State<HomePage>
   }
 
   _buildOverview() {
-    return BlocBuilder<HomeBloc, BlocState>(
+    return BlocBuilder<ChartBloc, BlocState>(
       builder: (context, state) {
-        if (state.status == Status.loading) {
+        if (state.status == Status.loading || chartBloc.list.isEmpty) {
           return BaseLoading();
         }
         return Container(
@@ -152,17 +162,17 @@ class _HomePageState extends State<HomePage>
               ItemOverview(
                 image: Assets.icons.temp.image(height: 25, width: 25),
                 title: "Sun light",
-                subTitle: "High",
+                subTitle: "${chartBloc.list.last.light.validator} lux",
               ).expanded(),
               ItemOverview(
                 image: Assets.icons.water.image(height: 25, width: 25),
                 title: "Humidity",
-                subTitle: "${myBloc.list.last.humidity.validator}%",
+                subTitle: "${chartBloc.list.last.humidity.validator}%",
               ).expanded(),
               ItemOverview(
                 image: Assets.icons.temp.image(height: 25, width: 25),
                 title: "Temp",
-                subTitle: "${myBloc.list.last.temperature.validator}°C",
+                subTitle: "${chartBloc.list.last.temperature.validator}°C",
               ).expanded(),
             ],
           ),
@@ -172,31 +182,33 @@ class _HomePageState extends State<HomePage>
   }
 
   _buildChart() {
-    return BlocBuilder<HomeBloc, BlocState>(
-      builder: (context, state) {
-        if (state.status == Status.loading) {
-          return const BaseLoading();
-        }
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: 16.radius,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 1,
-                blurRadius: 7,
-                offset: const Offset(0, 3),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: 16.radius,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 1,
+            blurRadius: 7,
+            offset: const Offset(0, 3),
           ),
-          margin: 16.padding,
-          padding: 16.padding,
-          child: Column(
-            children: [
-              ChartOverview(list: myBloc.list),
-              16.height,
-              Row(
+        ],
+      ),
+      margin: 16.padding,
+      padding: 16.padding,
+      child: Column(
+        children: [
+          ChartOverview(
+            bloc: chartBloc,
+          ),
+          16.height,
+          BlocBuilder<HomeBloc, BlocState>(
+            builder: (context, state) {
+              if (state.status == Status.loading) {
+                return BaseLoading();
+              }
+              return Row(
                 children: [
                   Column(
                     children: [
@@ -217,20 +229,22 @@ class _HomePageState extends State<HomePage>
                               alignment: Alignment.center,
                               transform: Matrix4.identity()
                                 ..rotateZ(_animation.value),
-                              child:
-                                  Assets.icons.fan.svg(height: 50, width: 50));
+                              child: Assets.icons.fan.svg(
+                                  height: 50, width: 50));
                         },
                         animation: _controller,
                       ),
-                      SwitchButton(value: myBloc.fan, onChanged: (value) async {
+                      SwitchButton(
+                          value: myBloc.fan,
+                          onChanged: (value) async {
                             myBloc.setFan(value);
-                        // stop animation
-                        if (!value) {
-                          _controller.stop();
-                        } else {
-                          _controller.repeat();
-                        }
-                      }),
+                            // stop animation
+                            if (!value) {
+                              _controller.stop();
+                            } else {
+                              _controller.repeat();
+                            }
+                          }),
                     ],
                   ).expanded(),
                   8.width,
@@ -246,16 +260,11 @@ class _HomePageState extends State<HomePage>
                     ],
                   ).expanded(),
                 ],
-              ),
-              OutlinedButton(onPressed: () {
-                Timer.periodic(Duration(milliseconds: 5000), (timer) {
-                  myBloc.add();
-                });
-              }, child: Text("Add")),
-            ],
+              );
+            },
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 }
