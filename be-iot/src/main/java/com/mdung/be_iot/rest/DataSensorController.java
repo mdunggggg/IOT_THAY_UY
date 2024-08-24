@@ -2,6 +2,7 @@ package com.mdung.be_iot.rest;
 
 import com.mdung.be_iot.base.BaseResponse;
 import com.mdung.be_iot.base.Pagination;
+import com.mdung.be_iot.entity.DataSensor;
 import com.mdung.be_iot.service.DataSensorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 
 @RestController
@@ -47,6 +50,16 @@ public class DataSensorController {
     ) {
         return BaseResponse.success(
                 dataSensorService.getAllDataSensors(page, size, search, type, sortType)
+        );
+    }
+
+
+    @GetMapping("/dashboard")
+    @Operation(summary = "Get data sensors for dashboard")
+    public BaseResponse<List<DataSensor>> getDataSensorsDashboard(@RequestParam(required = false) Long lastId,
+                                                                  @RequestParam(required = false) Integer size) {
+        return BaseResponse.success(
+                dataSensorService.getDataSensorsAfterId(lastId, size)
         );
     }
 

@@ -11,6 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
 
 @Service
@@ -99,6 +100,21 @@ public class DataSensorServiceImpl implements DataSensorService {
         }
 
         return specification;
+    }
+
+    @Override
+    public List<DataSensor> getDataSensorsAfterId(Long lastId, Integer size) {
+
+
+        if (lastId == null) {
+            lastId = 0L;
+        }
+        if (size == null || size <= 0) {
+            return dataSensorRepository.findByIdGreaterThanAndTimeGreaterThanEqualOrderByTimeAscIdAsc(lastId, 0L);
+        } else {
+            Pageable pageable = PageRequest.of(0, size);
+            return dataSensorRepository.findByIdGreaterThanAndTimeGreaterThanEqualOrderByTimeAscIdAsc(lastId, 0L, pageable);
+        }
     }
 
     private Specification<DataSensor> sortBy(String field, boolean ascending) {
