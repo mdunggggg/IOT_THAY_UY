@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:home_tracking/presentation/blocs/bloc_state.dart';
 import 'package:home_tracking/presentation/feature/home/bloc/chart_bloc.dart';
+import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/style_text/style_text.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -15,7 +16,6 @@ class ChartOverview extends StatefulWidget {
 
   final ChartBloc bloc;
 
-
   @override
   State<ChartOverview> createState() => _ChartOverviewState();
 }
@@ -23,16 +23,22 @@ class ChartOverview extends StatefulWidget {
 class _ChartOverviewState extends State<ChartOverview> {
   late TooltipBehavior _tooltipBehavior;
   late ZoomPanBehavior _zoomPanBehavior;
+  late TrackballBehavior _trackballBehavior;
 
   @override
   void initState() {
     _tooltipBehavior = TooltipBehavior(
       enable: true,
+      duration: 1000,
       builder: (dynamic data, dynamic point, dynamic series, int pointIndex,
           int seriesIndex) {
         return Container(
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: seriesIndex == 0
+                ? Colors.green.withOpacity(0.5)
+                : seriesIndex == 1
+                    ? Colors.blue.withOpacity(0.5)
+                    : Colors.red.withOpacity(0.5),
             borderRadius: BorderRadius.circular(5),
             boxShadow: [
               BoxShadow(
@@ -43,28 +49,32 @@ class _ChartOverviewState extends State<ChartOverview> {
               ),
             ],
           ),
+          padding: 8.padding,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                'Time: ${convertToTime(data.time)}',
-                style: StyleApp.bold(color: Colors.black),
-              ),
-              if(seriesIndex == 0)
+              if (seriesIndex == 0)
                 Text(
                   'Temperature: ${data.temperature}°C',
-                  style: StyleApp.bold(color: Colors.black),
+                  style: StyleApp.bold(color: Colors.white),
                 ),
-              if(seriesIndex == 1)
+              if (seriesIndex == 1)
                 Text(
                   'Humidity: ${data.humidity}%',
-                  style: StyleApp.bold(color: Colors.black),
+                  style: StyleApp.bold(color: Colors.white),
                 ),
-              if(seriesIndex == 2)
+              if (seriesIndex == 2)
                 Text(
                   'Light: ${data.light} lux',
-                  style: StyleApp.bold(color: Colors.black),
+                  style: StyleApp.bold(color: Colors.white),
                 ),
+              Divider(
+                color: Colors.white,
+              ),
+              Text(
+                'Time: ${convertToTime(data.time)}',
+                style: StyleApp.bold(color: Colors.white),
+              ),
             ],
           ),
         );
@@ -72,21 +82,30 @@ class _ChartOverviewState extends State<ChartOverview> {
     );
     _zoomPanBehavior = ZoomPanBehavior(
       // Enables pinch zooming
-        enablePinching: true,
-        enableDoubleTapZooming: true,
-        enableSelectionZooming: true,
-        selectionRectBorderColor: Colors.red,
-        selectionRectBorderWidth: 1,
-        selectionRectColor: Colors.grey
+      enablePinching: true,
+      enableDoubleTapZooming: true,
+      enableSelectionZooming: true,
+      selectionRectBorderColor: Colors.red,
+      selectionRectBorderWidth: 1,
+      selectionRectColor: Colors.grey,
     );
 
-    Timer.periodic(Duration(seconds: 6), (timer) {
-      widget.bloc.getData();
-    });
+    _trackballBehavior = TrackballBehavior(
+        enable: true,
+        tooltipSettings: InteractiveTooltip(
+            enable: true,
+            color: Colors.white,
+          textStyle: StyleApp.bold(color: Colors.black),
+        ),
+        tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
+        lineType: TrackballLineType.vertical,
+    );
+
+    // Timer.periodic(Duration(seconds: 6), (timer) {
+    //   widget.bloc.getData();
+    // });
     super.initState();
   }
-
-  bool isCardView = true;
 
   @override
   Widget build(BuildContext context) {
@@ -97,15 +116,13 @@ class _ChartOverviewState extends State<ChartOverview> {
     );
   }
 
-  /// Returns the chart with multiple axes.
   SfCartesianChart _buildMultipleAxisLineChart() {
     return SfCartesianChart(
-      title: ChartTitle(
-          text: isCardView ? '' : 'Washington vs New York temperature'),
-      legend: Legend(isVisible: isCardView),
+      legend: Legend(isVisible: true),
       enableAxisAnimation: true,
       zoomPanBehavior: _zoomPanBehavior,
       enableSideBySideSeriesPlacement: true,
+      trackballBehavior: _trackballBehavior,
       axes: const <ChartAxis>[
         NumericAxis(
             opposedPosition: true,
@@ -116,7 +133,7 @@ class _ChartOverviewState extends State<ChartOverview> {
             maximum: 1050,
             interval: 100)
       ],
-      primaryXAxis: const CategoryAxis(
+      primaryXAxis: CategoryAxis(
         labelPlacement: LabelPlacement.onTicks,
         autoScrollingDelta: 5,
         autoScrollingMode: AutoScrollingMode.end,
@@ -131,45 +148,41 @@ class _ChartOverviewState extends State<ChartOverview> {
       ),
       series: _getMultipleAxisLineSeries(),
       tooltipBehavior: _tooltipBehavior,
-
     );
   }
 
-  /// Returns the list of chart series which need to
-  /// render on the multiple axes chart.
   List<CartesianSeries<DataSensorModel, String>> _getMultipleAxisLineSeries() {
     return <CartesianSeries<DataSensorModel, String>>[
       LineSeries<DataSensorModel, String>(
-        dataSource: widget.bloc.list,
-        xValueMapper: (DataSensorModel sales, _) =>
-            DateFormat('hh:mm:ss')
-                .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
-        yValueMapper: (DataSensorModel sales, _) => sales.temperature ?? 0,
-        name: 'Tempurature',
-        enableTooltip: true,
-      ),
+          color: Colors.green,
+          dataSource: widget.bloc.list,
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+          yValueMapper: (DataSensorModel sales, _) => sales.temperature ?? 0,
+          name: 'Tempurature',
+          enableTooltip: true,
+          markerSettings: MarkerSettings(isVisible: true)),
       LineSeries<DataSensorModel, String>(
-        dataSource: widget.bloc.list,
-        xValueMapper: (DataSensorModel sales, _) =>
-            DateFormat('hh:mm:ss')
-                .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
-        yValueMapper: (DataSensorModel sales, _) => sales.humidity ?? 0,
-        name: 'Humidity',
-        enableTooltip: true,
-      ),
+          color: Colors.blue,
+          dataSource: widget.bloc.list,
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+          yValueMapper: (DataSensorModel sales, _) => sales.humidity ?? 0,
+          name: 'Humidity',
+          enableTooltip: true,
+          markerSettings: MarkerSettings(isVisible: true)),
       LineSeries<DataSensorModel, String>(
-        dataSource: widget.bloc.list,
-        yAxisName: 'yAxis1',
-        xValueMapper: (DataSensorModel sales, _) =>
-            DateFormat('hh:mm:ss')
-                .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
-        yValueMapper: (DataSensorModel sales, _) => sales.light ?? 0,
-        name: 'Light',
-        enableTooltip: true,
-      )
+          color: Colors.red,
+          dataSource: widget.bloc.list,
+          yAxisName: 'yAxis1',
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+          yValueMapper: (DataSensorModel sales, _) => 1024 - (sales.light ?? 0),
+          name: 'Light',
+          enableTooltip: true,
+          markerSettings: MarkerSettings(isVisible: true))
     ];
   }
-
 
   int convertToSeconds(int? milliseconds) {
     return (milliseconds ?? 0) ~/ 1000;

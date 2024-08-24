@@ -158,21 +158,25 @@ class _HomePageState extends State<HomePage>
           margin: 16.padding,
           padding: 16.padding,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ItemOverview(
-                image: Assets.icons.temp.image(height: 25, width: 25),
+                image: Assets.icons.sun.image(height: 25, width: 25),
                 title: "Sun light",
                 subTitle: "${chartBloc.list.last.light.validator} lux",
+                isUp: chartBloc.list.last.light.validator >= chartBloc.list[max(0, chartBloc.list.length - 2)].light.validator,
               ).expanded(),
               ItemOverview(
                 image: Assets.icons.water.image(height: 25, width: 25),
                 title: "Humidity",
                 subTitle: "${chartBloc.list.last.humidity.validator}%",
+                isUp: chartBloc.list.last.humidity.validator >= chartBloc.list[max(0, chartBloc.list.length - 2)].humidity.validator,
               ).expanded(),
               ItemOverview(
                 image: Assets.icons.temp.image(height: 25, width: 25),
                 title: "Temp",
                 subTitle: "${chartBloc.list.last.temperature.validator}°C",
+                isUp: chartBloc.list.last.temperature.validator >= chartBloc.list[max(0, chartBloc.list.length - 2)].temperature.validator,
               ).expanded(),
             ],
           ),
