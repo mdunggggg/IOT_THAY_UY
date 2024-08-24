@@ -127,7 +127,7 @@ class _HomePageState extends State<HomePage>
             16.width,
             BaseCacheImage(
               url:
-              "https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg",
+                  "https://ichef.bbci.co.uk/news/976/cpsprodpb/16620/production/_91408619_55df76d5-2245-41c1-8031-07a4da3f313f.jpg",
               borderRadius: 8.radius,
             ).size(height: 100, width: 100)
           ],
@@ -164,19 +164,25 @@ class _HomePageState extends State<HomePage>
                 image: Assets.icons.sun.image(height: 25, width: 25),
                 title: "Sun light",
                 subTitle: "${chartBloc.list.last.light.validator} lux",
-                isUp: chartBloc.list.last.light.validator >= chartBloc.list[max(0, chartBloc.list.length - 2)].light.validator,
+                isUp: chartBloc.list.last.light.validator >=
+                    chartBloc.list[max(0, chartBloc.list.length - 2)].light
+                        .validator,
               ).expanded(),
               ItemOverview(
                 image: Assets.icons.water.image(height: 25, width: 25),
                 title: "Humidity",
                 subTitle: "${chartBloc.list.last.humidity.validator}%",
-                isUp: chartBloc.list.last.humidity.validator >= chartBloc.list[max(0, chartBloc.list.length - 2)].humidity.validator,
+                isUp: chartBloc.list.last.humidity.validator >=
+                    chartBloc.list[max(0, chartBloc.list.length - 2)].humidity
+                        .validator,
               ).expanded(),
               ItemOverview(
                 image: Assets.icons.temp.image(height: 25, width: 25),
                 title: "Temp",
                 subTitle: "${chartBloc.list.last.temperature.validator}°C",
-                isUp: chartBloc.list.last.temperature.validator >= chartBloc.list[max(0, chartBloc.list.length - 2)].temperature.validator,
+                isUp: chartBloc.list.last.temperature.validator >=
+                    chartBloc.list[max(0, chartBloc.list.length - 2)]
+                        .temperature.validator,
               ).expanded(),
             ],
           ),
@@ -212,55 +218,82 @@ class _HomePageState extends State<HomePage>
               if (state.status == Status.loading) {
                 return BaseLoading();
               }
+              print('${myBloc.airConditionerLoading}');
               return Row(
                 children: [
                   Column(
                     children: [
-                      if (myBloc.light)
+                      if (myBloc.light && !myBloc.lightLoading)
                         Assets.icons.lightOn.image(height: 50, width: 50)
+                      else if (!myBloc.light && !myBloc.lightLoading)
+                        Assets.icons.lightOff.image(height: 50, width: 50)
                       else
-                        Assets.icons.lightOff.image(height: 50, width: 50),
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: BaseLoading(),
+                        ),
                       SwitchButton(
-                          value: myBloc.light, onChanged: myBloc.setLight),
+                          value: myBloc.light,
+                          onChanged: myBloc.setLight,
+                          isLoading: myBloc.lightLoading),
                     ],
                   ).expanded(),
                   8.width,
                   Column(
                     children: [
-                      AnimatedBuilder(
-                        builder: (context, state) {
-                          return Transform(
-                              alignment: Alignment.center,
-                              transform: Matrix4.identity()
-                                ..rotateZ(_animation.value),
-                              child: Assets.icons.fan.svg(
-                                  height: 50, width: 50));
+                      if (!myBloc.fanLoading)
+                        AnimatedBuilder(
+                          builder: (context, state) {
+                            return Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.identity()
+                                  ..rotateZ(_animation.value),
+                                child: Assets.icons.fan
+                                    .svg(height: 50, width: 50));
+                          },
+                          animation: _controller,
+                        )
+                      else
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: BaseLoading(),
+                        ),
+                      SwitchButton(
+                        value: myBloc.fan,
+                        onChanged: (value) async {
+                          myBloc.setFan(value);
+                          if (!value) {
+                            _controller.stop();
+                          } else {
+                            _controller.repeat();
+                          }
                         },
-                        animation: _controller,
+                        isLoading: myBloc.fanLoading,
                       ),
-                      SwitchButton(
-                          value: myBloc.fan,
-                          onChanged: (value) async {
-                            myBloc.setFan(value);
-                            // stop animation
-                            if (!value) {
-                              _controller.stop();
-                            } else {
-                              _controller.repeat();
-                            }
-                          }),
                     ],
                   ).expanded(),
                   8.width,
                   Column(
                     children: [
-                      if (myBloc.airConditioner)
+                      if (myBloc.airConditioner &&
+                          !myBloc.airConditionerLoading)
                         Assets.icons.airOn.svg(height: 50, width: 50)
+                      else if (!myBloc.airConditioner &&
+                          !myBloc.airConditionerLoading)
+                        Assets.icons.ariOff.svg(height: 50, width: 50)
                       else
-                        Assets.icons.ariOff.svg(height: 50, width: 50),
+                        SizedBox(
+                          height: 50,
+                          width: 50,
+                          child: BaseLoading(),
+                        ),
                       SwitchButton(
-                          value: myBloc.airConditioner,
-                          onChanged: myBloc.setAirConditioner),
+                        value: myBloc.airConditioner,
+                        onChanged: myBloc.setAirConditioner,
+                        isLoading: myBloc.airConditionerLoading,
+                      ),
                     ],
                   ).expanded(),
                 ],
