@@ -5,10 +5,6 @@
 
 #define Log(X) Serial.println("=========>>>>> " + String(X))
 #define LogI(X) Serial.print("=====>>>>> " + String(X))
-#define MAX_WORDS 10    // Số từ tối đa trong mảng
-#define MAX_WORD_LENGTH 20  // Độ dài tối đa của mỗi từ
-
-char words[MAX_WORDS][MAX_WORD_LENGTH]; 
 
 // WiFi settings
 const char *wifiName = "Ahii"; // Enter your WiFi name
@@ -16,20 +12,22 @@ const char *password = "25072003";  // Enter WiFi password
 
 
 // MQTT Broker settings
-const char *mosquittoServer = "172.20.10.2"; // Enter your MQTT broker IP
-const char *topic = "topic/temp-humidity-light";
+const char *mosquittoServer = "172.20.10.2"; 
+const char *topicData = "topic/temp-humidity-light";
+const char *topicResponse = "topic/response";
+const char *topicAction = "topic/action";
 const int mqtt_port = 1883;
 
 WiFiClient espClient;
 PubSubClient client(espClient);
 
 // DHT Sensor settings
-#define DPIN 4       // D2-GPI04
+#define DPIN 4  
 #define DTYPE DHT11  
 DHT dht(DPIN, DTYPE);
 
 // Light Sensor settings
-#define LIGHT A0 // D1-GPI05
+#define LIGHT A0 
 
 void setup() {
   // Set software serial baud to 115200
@@ -41,15 +39,10 @@ void setup() {
 
   setUpLightSensor();
 
-  // Connect to WiFi
   connectToWifi();
 
-
-  // Connect to the MQTT broker (Mosquitto)
   connectToBroker();
 
-  // Subscribe to the topic
-  client.subscribe(topic);
 }
 
 void setUpDHTSensor() {
@@ -81,12 +74,13 @@ void connectToBroker() {
   
   while (!client.connected()) {
     String client_id = "B21DCCN268";
-    
     Serial.printf("The client %s connects to the MQTT broker\n", client_id.c_str());
   
     if (client.connect(client_id.c_str())) {
       Log("MQTT broker connected");
-      client.subscribe("topic/change_light");
+      client.subscribe(topicData);
+      client.subscribe(topicResponse);
+      client.subscribe(topicAction);
     } else {
       LogI("Failed with state ");
       Log(client.state());
@@ -101,12 +95,12 @@ void callback(char* topic, byte* payload, unsigned int length) {
     message += (char)payload[i];
   }
   String status = "UNKNOWN";
-  if (strcmp(topic, "topic/change_light") == 0) {
+  if (strcmp(topic, topicAction) == 0) {
       Serial.print("Message arrived on topic: ");
       Serial.print(topic);
       Serial.print(". Message: ");
       Serial.println(message);
-      client.publish("topic/response", message.c_str());
+      client.publish(topicResponse, message.c_str());
     if(message == "on light") {
         digitalWrite(D6, HIGH);
     }
@@ -130,7 +124,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if(message == "off air-condition") {
        digitalWrite(D8, LOW);
     }
-    client.publish("topic/response", message.c_str());
+    client.publish(topicResponse, message.c_str());
   }
 }
 
@@ -159,7 +153,6 @@ void loop() {
 
     float light = analogRead(0);
 
-    // Create a JSON payload with the sensor data
     String payload = "{";
     payload += "\"temperature\": ";
     payload += tc;
@@ -169,9 +162,7 @@ void loop() {
     payload += light;
     payload += "}";
 
-    //Serial.println(payload);
-
-    client.publish(topic, payload.c_str());
+    client.publish(topicData, payload.c_str());
     delay(1000);
 
   }
