@@ -43,10 +43,10 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "BE_B21DCCN268", "topic/temp-humidity-light");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "BE_B21DCCN268", "topic/temp-humidity-light", "topic/response");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
-        adapter.setQos(1);
+        adapter.setQos(0);
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
     }
@@ -56,16 +56,15 @@ public class MqttConfig {
     public MessageHandler handler() {
         return message -> {
             System.out.println("Received message: " + message);
-//            try {
-//                String payload = (String) message.getPayload();
-//                DataSensor dataSensor = objectMapper.readValue(payload, DataSensor.class);
-//                dataSensor.setTime(System.currentTimeMillis());
-//                //dataSensorService.createDataSensor(dataSensor);
-//                System.out.println("Saved data sensor: " + dataSensor);
-//            } catch (Exception e) {
-//                System.err.println("Failed to process message: " + e.getMessage());
-//                e.printStackTrace();
-//            }
+            try {
+                String payload = (String) message.getPayload();
+                DataSensor dataSensor = objectMapper.readValue(payload, DataSensor.class);
+                dataSensor.setTime(System.currentTimeMillis());
+                dataSensorService.createDataSensor(dataSensor);
+                System.out.println("Saved data sensor: " + dataSensor);
+            } catch (Exception e) {
+                System.err.println("Failed to process message: " + e.getMessage());
+            }
         };
     }
 
@@ -73,9 +72,9 @@ public class MqttConfig {
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[] {"tcp://localhost:1883"});
-        options.setUserName("username");
-        options.setPassword("password".toCharArray());
+        options.setServerURIs(new String[] {"tcp://172.20.10.2:1883"});
+        options.setUserName("Ahii");
+        options.setPassword("25072003".toCharArray());
         factory.setConnectionOptions(options);
         return factory;
     }
@@ -84,7 +83,7 @@ public class MqttConfig {
     @ServiceActivator(inputChannel = "mqttOutboundChannel")
     public MessageHandler mqttOutbound() {
         MqttPahoMessageHandler messageHandler =
-                new MqttPahoMessageHandler("testClient", mqttClientFactory());
+                new MqttPahoMessageHandler("BE_Pub_B21DCCN268", mqttClientFactory());
         messageHandler.setAsync(true);
         messageHandler.setDefaultTopic("topic/change_light");
         return messageHandler;
