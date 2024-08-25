@@ -85,7 +85,7 @@ public class MqttConfig {
         MqttPahoMessageHandler messageHandler =
                 new MqttPahoMessageHandler("BE_Pub_B21DCCN268", mqttClientFactory());
         messageHandler.setAsync(true);
-        messageHandler.setDefaultTopic("topic/change_light");
+        messageHandler.setDefaultTopic("topic/action");
         return messageHandler;
     }
 
