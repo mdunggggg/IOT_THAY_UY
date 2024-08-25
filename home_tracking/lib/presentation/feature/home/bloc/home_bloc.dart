@@ -66,7 +66,10 @@ class HomeBloc extends Cubit<BlocState<List<DataSensorModel>>> {
     await Future.delayed(Duration(seconds: 2));
     _fanLoading = false;
     _fan = value;
-    _mqttRepository.changeFan(value);
+    final res = await _mqttRepository.changeFan(value);
+    if(res.data == false) {
+      _fan = !_fan;
+    }
     emit(state.copyWith(status: Status.success));
   }
 
@@ -76,7 +79,10 @@ class HomeBloc extends Cubit<BlocState<List<DataSensorModel>>> {
     await Future.delayed(Duration(seconds: 2));
     _lightLoading = false;
     _light = value;
-    _mqttRepository.changeLight(value);
+    final res = await _mqttRepository.changeLight(value);
+    if(res.data == false) {
+      _light = !_light;
+    }
     emit(state.copyWith(status: Status.success));
   }
 
@@ -86,7 +92,10 @@ class HomeBloc extends Cubit<BlocState<List<DataSensorModel>>> {
     await Future.delayed(Duration(seconds: 2));
     _airConditionerLoading = false;
     _airConditioner = value;
-    _mqttRepository.changeAirConditioner(value);
+    final res = await _mqttRepository.changeAirConditioner(value);
+    if(res.data == false) {
+      _airConditioner = !_airConditioner;
+    }
     emit(state.copyWith(status: Status.success));
   }
 

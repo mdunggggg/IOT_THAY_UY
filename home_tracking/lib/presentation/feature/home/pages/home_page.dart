@@ -163,9 +163,9 @@ class _HomePageState extends State<HomePage>
               ItemOverview(
                 image: Assets.icons.sun.image(height: 25, width: 25),
                 title: "Sun light",
-                subTitle: "${chartBloc.list.last.light.validator} lux",
-                isUp: chartBloc.list.last.light.validator >=
-                    chartBloc.list[max(0, chartBloc.list.length - 2)].light
+                subTitle: "${1024 - chartBloc.list.last.light.validator} lux",
+                isUp: 1024 - chartBloc.list.last.light.validator >=
+                    1024 - chartBloc.list[max(0, chartBloc.list.length - 2)].light
                         .validator,
               ).expanded(),
               ItemOverview(
@@ -218,7 +218,6 @@ class _HomePageState extends State<HomePage>
               if (state.status == Status.loading) {
                 return BaseLoading();
               }
-              print('${myBloc.airConditionerLoading}');
               return Row(
                 children: [
                   Column(

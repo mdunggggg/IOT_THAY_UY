@@ -80,8 +80,7 @@ class _ChartOverviewState extends State<ChartOverview> {
         );
       },
     );
-    _zoomPanBehavior = ZoomPanBehavior(
-      // Enables pinch zooming
+   _zoomPanBehavior = ZoomPanBehavior(
       enablePinching: true,
       enableDoubleTapZooming: true,
       enableSelectionZooming: true,
@@ -97,13 +96,14 @@ class _ChartOverviewState extends State<ChartOverview> {
             color: Colors.white,
           textStyle: StyleApp.bold(color: Colors.black),
         ),
+        activationMode: ActivationMode.longPress,
         tooltipDisplayMode: TrackballDisplayMode.groupAllPoints,
         lineType: TrackballLineType.vertical,
     );
 
-    // Timer.periodic(Duration(seconds: 6), (timer) {
-    //   widget.bloc.getData();
-    // });
+    Timer.periodic(Duration(seconds: 3), (timer) {
+      widget.bloc.getData();
+    });
     super.initState();
   }
 
@@ -120,7 +120,7 @@ class _ChartOverviewState extends State<ChartOverview> {
     return SfCartesianChart(
       legend: Legend(isVisible: true),
       enableAxisAnimation: true,
-      zoomPanBehavior: _zoomPanBehavior,
+     //zoomPanBehavior: _zoomPanBehavior,
       enableSideBySideSeriesPlacement: true,
       trackballBehavior: _trackballBehavior,
       axes: const <ChartAxis>[
