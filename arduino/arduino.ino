@@ -106,6 +106,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
       Serial.print(topic);
       Serial.print(". Message: ");
       Serial.println(message);
+      client.publish("topic/response", message.c_str());
     if(message == "on light") {
         digitalWrite(D6, HIGH);
     }
@@ -129,6 +130,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
     if(message == "off air-condition") {
        digitalWrite(D8, LOW);
     }
+    client.publish("topic/response", message.c_str());
   }
 }
 
@@ -143,7 +145,7 @@ void loop() {
   static unsigned long lastPublishTime = 0;
   unsigned long currentMillis = millis();
   
-  if (currentMillis - lastPublishTime >= 8000) { 
+  if (currentMillis - lastPublishTime >= 2000) { 
     lastPublishTime = currentMillis;
 
     // Read temperature and humidity from DHT sensor
@@ -169,12 +171,10 @@ void loop() {
 
     //Serial.println(payload);
 
-    // Publish the payload to the MQTT topic
     client.publish(topic, payload.c_str());
-    delay(2000);
+    delay(1000);
 
   }
 }
-
 
 
