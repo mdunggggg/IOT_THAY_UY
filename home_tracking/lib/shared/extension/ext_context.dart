@@ -49,4 +49,8 @@ extension extContext on BuildContext{
     );
   }
 
+  pop({dynamic result}) {
+    Navigator.pop(this, result);
+  }
+
 }

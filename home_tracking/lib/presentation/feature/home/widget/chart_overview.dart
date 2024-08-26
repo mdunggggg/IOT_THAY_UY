@@ -101,9 +101,9 @@ class _ChartOverviewState extends State<ChartOverview> {
         lineType: TrackballLineType.vertical,
     );
 
-    Timer.periodic(Duration(seconds: 3), (timer) {
-      widget.bloc.getData();
-    });
+    // Timer.periodic(Duration(seconds: 3), (timer) {
+    //   widget.bloc.getData();
+    // });
     super.initState();
   }
 

@@ -20,6 +20,8 @@ class ActionRepository {
     String? device,
     String? search,
     bool? isSort,
+    String? startDate,
+    String? endDate,
   }) async {
     try {
       final payload = {
@@ -28,8 +30,11 @@ class ActionRepository {
         'appliance': appliance,
         'device': device,
         'search': search,
+        'startDate': startDate,
+        'endDate': endDate,
         'sort': isSort == null ? null : isSort ? 'asc' : 'desc',
       };
+      print('payload: $payload');
       payload.removeWhere((key, value) => value == null || value == '');
       final response = await _dio.get('actions/', data: payload);
       final data = (response.data['data']['elements'] as List);

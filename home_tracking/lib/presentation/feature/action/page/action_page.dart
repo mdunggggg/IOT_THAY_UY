@@ -11,6 +11,8 @@ import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';
 import 'package:home_tracking/shared/style_text/style_text.dart';
 
+import '../../../../date_time_utils/date_time_widget.dart';
+import '../../../../date_time_utils/param_date.dart';
 import '../../../../shared/colors/colors.dart';
 import '../../../blocs/bloc_state.dart';
 import '../../../constants/colors.dart';
@@ -81,6 +83,8 @@ class _ActionPageState extends State<ActionPage> {
           _buildSearch(),
           16.height,
           _buildDropdown(),
+          16.height,
+          _buildTime(),
           16.height,
           _buiLdItems(),
           16.height,
@@ -283,5 +287,64 @@ class _ActionPageState extends State<ActionPage> {
       default:
         return Colors.black;
     }
+  }
+
+  _buildTime() {
+    return InkWell(
+      onTap: showDateChoose,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(sp12),
+          border: Border.all(color: bg_2),
+          color: whiteColor,
+        ),
+        padding: const EdgeInsets.all(sp16),
+        margin: const EdgeInsets.all(sp12),
+        child: Row(
+          children: [
+            const Icon(Icons.date_range_outlined),
+            const SizedBox(width: sp8),
+            BlocBuilder<ActionBloc,
+                BlocState>(
+              builder: (context, state) {
+                var text = '';
+                switch (myBloc.paramDate?.dateRange) {
+                  case DateRangeEnum.option:
+                    text =
+                    '${myBloc.paramDate?.startDate?.formatDefault} - ${myBloc.paramDate?.endDate?.formatDefault}';
+                    break;
+                  default:
+                    text = myBloc.paramDate?.dateRange
+                        ?.toName ??
+                        '';
+                    break;
+                }
+                return Expanded(
+                  child: Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showDateChoose() {
+    context
+        .dialog(
+      DateTimeWidget(
+        param: myBloc.paramDate,
+      ),
+    )
+        .then((value) {
+      if (value is ParamDate) {
+        myBloc.changeDate(value);
+      }
+    });
   }
 }
