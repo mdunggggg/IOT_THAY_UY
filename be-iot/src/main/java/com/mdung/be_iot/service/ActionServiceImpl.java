@@ -10,6 +10,10 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+
+import static com.mdung.be_iot.utils.DateTimeUtils.*;
+
 
 @Service
 public class ActionServiceImpl implements ActionService {
@@ -28,7 +32,7 @@ public class ActionServiceImpl implements ActionService {
     }
 
     @Override
-    public Pagination getAllActions(String appliance, String search, Pageable pageable) {
+    public Pagination getAllActions(String appliance, String search, Pageable pageable, LocalDate startDate, LocalDate endDate) {
         Specification<Action> specification = Specification.where(null);
 
         if (appliance != null) {
@@ -49,7 +53,14 @@ public class ActionServiceImpl implements ActionService {
                             criteriaBuilder.like(root.get("deviceId"), "%" + search + "%")
                     ));
         }
-
+        if (startDate != null) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("time"), localDateToLongStartOfDay(startDate)));
+        }
+        if (endDate != null) {
+            specification = specification.and((root, query, criteriaBuilder) ->
+                    criteriaBuilder.lessThanOrEqualTo(root.get("time"), localDateToLongEndOfDay(endDate)));
+        }
         Page<Action> actions = actionRepository.findAll(specification, pageable);
         return new Pagination<>(actions.getNumber(), actions.getTotalElements(), actions.getTotalPages(), actions.getContent());
 

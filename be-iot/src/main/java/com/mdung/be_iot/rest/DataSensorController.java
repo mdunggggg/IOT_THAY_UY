@@ -10,11 +10,13 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -46,10 +48,12 @@ public class DataSensorController {
                     in = ParameterIn.QUERY,
                     schema = @Schema(allowableValues = {"temp", "-temp", "humidity", "-humidity", "light", "-light", "time", "-time"})
             )
-            @RequestParam(defaultValue = "time") String sortType
-    ) {
+            @RequestParam(defaultValue = "time") String sortType,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate endDate )
+     {
         return BaseResponse.success(
-                dataSensorService.getAllDataSensors(page, size, search, type, sortType)
+                dataSensorService.getAllDataSensors(page, size, search, type, sortType, startDate, endDate)
         );
     }
 

@@ -11,10 +11,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/actions")
@@ -38,12 +42,15 @@ public class ActionController {
                   in = ParameterIn.QUERY,
                   schema = @Schema(allowableValues = {"desc", "asc"})
             )
-            @RequestParam(defaultValue = "desc") String sort)
+            @RequestParam(defaultValue = "desc") String sort,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate endDate)
+
     {
         Sort.Direction direction = sort.equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, "time"));
         return BaseResponse.success(
-                actionService.getAllActions(appliance, search, pageable)
+                actionService.getAllActions(appliance, search, pageable, startDate, endDate)
         );
     }
 }

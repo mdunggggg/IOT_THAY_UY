@@ -11,7 +11,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import static com.mdung.be_iot.utils.DateTimeUtils.localDateToLongEndOfDay;
+import static com.mdung.be_iot.utils.DateTimeUtils.localDateToLongStartOfDay;
 
 
 @Service
@@ -25,7 +29,7 @@ public class DataSensorServiceImpl implements DataSensorService {
     }
 
     @Override
-    public Pagination getAllDataSensors(int page, int size, String search, String type, String sortType) {
+    public Pagination getAllDataSensors(int page, int size, String search, String type, String sortType, LocalDate startDate, LocalDate endDate) {
         Pageable pageable = PageRequest.of(page, size);
 
         Specification<DataSensor> specification = Specification.where(null);
@@ -50,6 +54,14 @@ public class DataSensorServiceImpl implements DataSensorService {
                         criteriaBuilder.equal(root.get("humidity"), search),
                         criteriaBuilder.equal(root.get("light"), search))
                 );
+            }
+            if (startDate != null) {
+                specification = specification.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("time"), localDateToLongStartOfDay(startDate)));
+            }
+            if (endDate != null) {
+                specification = specification.and((root, query, criteriaBuilder) ->
+                        criteriaBuilder.lessThanOrEqualTo(root.get("time"), localDateToLongEndOfDay(endDate)));
             }
 
         } catch (Exception e) {
