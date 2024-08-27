@@ -19,6 +19,8 @@ class DataSensorRepo {
     String? search,
     String? type,
     String? sortType,
+    String? startDate,
+    String? endDate,
   }) async {
     try {
       final payload = {
@@ -27,6 +29,8 @@ class DataSensorRepo {
         'search': search,
         'type': type,
         'sortType': sortType,
+        'startDate': startDate,
+        'endDate': endDate,
       };
       payload.removeWhere((key, value) => value == null || value == '');
       final response = await _dio.get("data-sensors/", data: payload);

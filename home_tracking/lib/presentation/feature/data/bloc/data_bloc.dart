@@ -3,9 +3,12 @@ import 'package:home_tracking/presentation/blocs/bloc_state.dart';
 import 'package:home_tracking/presentation/model/data_sensor_model.dart';
 import 'package:home_tracking/presentation/model/pagination_model.dart';
 import 'package:home_tracking/presentation/repository/data_sensor_repo.dart';
+import 'package:home_tracking/shared/extension/ext_date_time.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/utils/delay_callback.dart';
 import 'package:injectable/injectable.dart';
+
+import '../../../../date_time_utils/param_date.dart';
 
 @injectable
 class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
@@ -13,6 +16,7 @@ class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
 
   final DataSensorRepo _repo;
   PaginationModel? pagination;
+  ParamDate? paramDate = ParamDate();
 
   bool _isSort = false;
 
@@ -34,6 +38,13 @@ class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
       getData();
     });
   }
+
+  void changeDate(ParamDate paramDate) {
+    this.paramDate = paramDate;
+    page = 0;
+    getData();
+  }
+
 
   void changeSearch(int? index) {
     indexSearch = index ?? 0;
@@ -67,7 +78,9 @@ class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
       size: size,
       search: _search,
       type: searchTypes[indexSearch].code,
-      sortType: _isSort ? '-${propertyTypes[indexProperty].code}' : propertyTypes[indexProperty].code,
+      sortType: !_isSort ? '-${propertyTypes[indexProperty].code}' : propertyTypes[indexProperty].code,
+      startDate: paramDate?.startDate?.formatDefault,
+      endDate: paramDate?.endDate?.formatDefault,
     ).then((res) {
       if (res.code == 200) {
         pagination = res.extra;

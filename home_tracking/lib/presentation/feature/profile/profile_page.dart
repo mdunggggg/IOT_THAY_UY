@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:home_tracking/presentation/feature/home/widget/item_row.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../gen/assets.gen.dart';
 import '../../../shared/style_text/style_text.dart';
@@ -61,8 +62,8 @@ class _ProfilePageState extends State<ProfilePage> {
                           16.height,
                           Text(
                             "Hoàng Mạnh Dũng",
-                            style:
-                                StyleApp.bold(fontSize: 24, color: Colors.white),
+                            style: StyleApp.bold(
+                                fontSize: 24, color: Colors.white),
                           )
                         ],
                       ),
@@ -123,9 +124,18 @@ class _ProfilePageState extends State<ProfilePage> {
           16.height,
           const ItemRow(title: "Tên dự án:", value: "Home Tracking"),
           const ItemRow(title: "Thành viên:", value: "Hoàng Mạnh Dũng"),
-          const ItemRow(title: "Github", value: "mdunggggg"),
+          InkWell(
+              onTap: () {
+                _launchUrl(Uri.parse('https://github.com/mdunggggg/IOT_THAY_UY'));
+              },
+              child: const ItemRow(title: "Github", value: "mdunggggg")),
         ],
       ),
     );
+  }
+  Future<void> _launchUrl(Uri uri) async {
+    if (!await launchUrl(uri)) {
+      throw Exception('Could not launch $uri');
+    }
   }
 }

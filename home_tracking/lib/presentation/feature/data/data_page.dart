@@ -7,6 +7,8 @@ import 'package:home_tracking/shared/extension/ext_date_time.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';
 
+import '../../../date_time_utils/date_time_widget.dart';
+import '../../../date_time_utils/param_date.dart';
 import '../../../shared/colors/colors.dart';
 import '../../../shared/style_text/style_text.dart';
 import '../../blocs/bloc_state.dart';
@@ -16,6 +18,7 @@ import '../../constants/spacing.dart';
 import '../../constants/typography.dart';
 import '../../di/di.dart';
 import '../home/widget/app_input.dart';
+import '../home/widget/empty_container.dart';
 import '../home/widget/item_row.dart';
 import '../home/widget/select.dart';
 import 'bloc/data_bloc.dart';
@@ -85,6 +88,8 @@ class _DataPageState extends State<DataPage> {
           _buildDropdown(),
           16.height,
           _buildDropdown2(),
+          16.height,
+          _buildTime(),
           16.height,
           _buiLdItems(),
           16.height,
@@ -211,12 +216,12 @@ class _DataPageState extends State<DataPage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(sp8),
                   border: Border.all(
-                    color: myBloc.isSort ? Colors.green : Colors.grey,
+                    color: Colors.grey,
                   ),
                 ),
                 child: Icon(
-                  Icons.filter_alt_outlined,
-                  color: myBloc.isSort ? Colors.green : Colors.grey,
+                  myBloc.isSort ? Icons.arrow_upward : Icons.arrow_downward,
+                  color: Colors.grey,
                 ),
               ),
             );
@@ -231,6 +236,9 @@ class _DataPageState extends State<DataPage> {
       builder: (context, state) {
         if (state.status == Status.loading && state.data == null) {
           return const BaseLoading();
+        }
+        if(state.data == null || state.data!.isEmpty){
+          return const EmptyContainer();
         }
         return ListView.separated(
           shrinkWrap: true,
@@ -309,10 +317,6 @@ class _DataPageState extends State<DataPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'ID: ${item.id}',
-          style: p5.copyWith(fontWeight: BOLD),
-        ),
         ItemRow(
           title: 'Thời gian',
           value:
@@ -323,5 +327,63 @@ class _DataPageState extends State<DataPage> {
         ItemRow(title: 'Ánh sáng', value: item.light?.toString() ?? ''),
       ],
     );
+  }
+
+  _buildTime() {
+    return InkWell(
+      onTap: showDateChoose,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(sp12),
+          border: Border.all(color: bg_2),
+          color: whiteColor,
+        ),
+        padding: const EdgeInsets.all(sp16),
+        child: Row(
+          children: [
+            const Icon(Icons.date_range_outlined),
+            const SizedBox(width: sp8),
+            BlocBuilder<DataBloc,
+                BlocState>(
+              builder: (context, state) {
+                var text = '';
+                switch (myBloc.paramDate?.dateRange) {
+                  case DateRangeEnum.option:
+                    text =
+                    '${myBloc.paramDate?.startDate?.formatDefault} - ${myBloc.paramDate?.endDate?.formatDefault}';
+                    break;
+                  default:
+                    text = myBloc.paramDate?.dateRange
+                        ?.toName ??
+                        '';
+                    break;
+                }
+                return Expanded(
+                  child: Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showDateChoose() {
+    context
+        .dialog(
+      DateTimeWidget(
+        param: myBloc.paramDate,
+      ),
+    )
+        .then((value) {
+      if (value is ParamDate) {
+        myBloc.changeDate(value);
+      }
+    });
   }
 }

@@ -20,6 +20,7 @@ import '../../../constants/spacing.dart';
 import '../../../constants/typography.dart';
 import '../../../di/di.dart';
 import '../../../model/action_model.dart';
+import '../../home/widget/empty_container.dart';
 import '../../home/widget/select.dart';
 
 @RoutePage()
@@ -53,7 +54,6 @@ class _ActionPageState extends State<ActionPage> {
                 Color(0xFF05231F),
                 Colors.white,
                 Colors.white,
-
               ],
             ),
           ),
@@ -115,12 +115,12 @@ class _ActionPageState extends State<ActionPage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(sp8),
                   border: Border.all(
-                    color: myBloc.isSort ? Colors.green : Colors.grey,
+                    color: Colors.grey,
                   ),
                 ),
                 child:  Icon(
-                  Icons.filter_alt_outlined,
-                  color: myBloc.isSort ? Colors.green : Colors.grey,
+                  myBloc.isSort ? Icons.arrow_upward : Icons.arrow_downward,
+                  color: Colors.grey,
                 ),
               ),
             );
@@ -181,6 +181,9 @@ class _ActionPageState extends State<ActionPage> {
       builder: (context, state) {
         if (state.status == Status.loading && state.data == null) {
           return const BaseLoading();
+        }
+        if(state.data == null || state.data!.isEmpty){
+          return const EmptyContainer();
         }
         return ListView.separated(
           shrinkWrap: true,
@@ -299,7 +302,6 @@ class _ActionPageState extends State<ActionPage> {
           color: whiteColor,
         ),
         padding: const EdgeInsets.all(sp16),
-        margin: const EdgeInsets.all(sp12),
         child: Row(
           children: [
             const Icon(Icons.date_range_outlined),

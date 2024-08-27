@@ -17,7 +17,7 @@ class ActionBloc extends Cubit<BlocState<List<ActionModel>>> {
   final ActionRepository _actionRepository;
 
   PaginationModel? pagination;
-  ParamDate? paramDate;
+  ParamDate? paramDate = ParamDate();
 
   final DelayCallBack _delayCallBack = DelayCallBack(delay: 500.milliseconds);
 
