@@ -57,11 +57,17 @@ class _ActionPageState extends State<ActionPage> {
               ],
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildTable(),
-              ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              myBloc.page = 0;
+              myBloc.getData();
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildTable(),
+                ],
+              ),
             ),
           ),
         ),
@@ -276,7 +282,7 @@ class _ActionPageState extends State<ActionPage> {
         ItemRow(
             title: 'Thời gian',
             value: DateTime.fromMillisecondsSinceEpoch(item.time ?? 0)
-                .formatDefault),
+                .formatCustom(format: "HH:mm:ss dd/MM/yyyy")),
       ],
     );
   }

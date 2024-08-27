@@ -13,7 +13,7 @@ class MqttRepository {
         'actionCode': value ? 'on' : 'off',
         'deviceId': 'IPhone 15 Pro'
       };
-      final res = await _dio.get('mqtt/turn-on-off-fan', data: payload);
+      final res = await _dio.post('mqtt/turn-on-off-fan', data: payload);
       return BaseResponseModel(
         code: res.data['status']['code'],
         message: res.data['status']['message'],
@@ -36,7 +36,7 @@ class MqttRepository {
         'actionCode': value ? 'on' : 'off',
         'deviceId': 'IPhone 15 Pro'
       };
-      final res = await _dio.get('mqtt/turn-on-off-light', data: payload);
+      final res = await _dio.post('mqtt/turn-on-off-light', data: payload);
       return BaseResponseModel(
         code: res.data['status']['code'],
         message: res.data['status']['message'],
@@ -59,7 +59,7 @@ class MqttRepository {
         'actionCode': value ? 'on' : 'off',
         'deviceId': 'IPhone 15 Pro'
       };
-      final res = await _dio.get('mqtt/turn-on-off-air-condition', data: payload);
+      final res = await _dio.post('mqtt/turn-on-off-air-condition', data: payload);
       return BaseResponseModel(
         code: res.data['status']['code'],
         message: res.data['status']['message'],

@@ -7,7 +7,7 @@ import 'package:home_tracking/presentation/blocs/bloc_state.dart';
 import 'package:home_tracking/presentation/components/cache_image.dart';
 import 'package:home_tracking/presentation/components/loading.dart';
 import 'package:home_tracking/presentation/feature/home/bloc/home_bloc.dart';
-import 'package:home_tracking/presentation/feature/home/widget/chart_overview.dart';
+import 'package:home_tracking/presentation/feature/home/pages/chart_overview.dart';
 import 'package:home_tracking/presentation/feature/home/widget/switch_button.dart';
 import 'package:home_tracking/shared/extension/ext_num.dart';
 import 'package:home_tracking/shared/extension/ext_widget.dart';

@@ -60,11 +60,17 @@ class _DataPageState extends State<DataPage> {
               ],
             ),
           ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                _buildTable(),
-              ],
+          child: RefreshIndicator(
+            onRefresh: () async {
+              myBloc.page = 0;
+              myBloc.getData();
+            },
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildTable(),
+                ],
+              ),
             ),
           ),
         ),
@@ -320,7 +326,7 @@ class _DataPageState extends State<DataPage> {
         ItemRow(
           title: 'Thời gian',
           value:
-              DateTime.fromMillisecondsSinceEpoch(item.time ?? 0).formatDefault,
+              DateTime.fromMillisecondsSinceEpoch(item.time ?? 0).formatCustom(format: "HH:mm:ss dd/MM/yyyy"),
         ),
         ItemRow(title: 'Nhiệt độ', value: item.temperature?.toString() ?? ''),
         ItemRow(title: 'Độ ẩm', value: item.humidity?.toString() ?? ''),
