@@ -31,8 +31,8 @@ class _MainScreenState extends State<MainScreen> {
             backgroundColor: Colors.white,
             items:  [
               SalomonBottomBarItem(icon: const Icon(Icons.home_outlined), title: const Text("Home"), selectedColor: Colors.blue),
-              SalomonBottomBarItem(icon: const Icon(Icons.search), title: const Text("Search"), selectedColor: Colors.red),
-              SalomonBottomBarItem(icon: const Icon(Icons.add), title: const Text("Add"), selectedColor: Colors.green),
+              SalomonBottomBarItem(icon: const Icon(Icons.art_track_sharp), title: const Text("Search"), selectedColor: Colors.red),
+              SalomonBottomBarItem(icon: const Icon(Icons.data_thresholding_outlined), title: const Text("Add"), selectedColor: Colors.green),
               SalomonBottomBarItem(icon: const Icon(Icons.person_outline), title: const Text("Profile"), selectedColor: Colors.purple),
             ],
           ),
