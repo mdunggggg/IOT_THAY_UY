@@ -2,6 +2,7 @@ package com.mdung.be_iot.rest;
 
 import com.mdung.be_iot.base.BaseResponse;
 import com.mdung.be_iot.base.Status;
+import com.mdung.be_iot.dto.ActionInputDto;
 import com.mdung.be_iot.entity.Action;
 import com.mdung.be_iot.service.ActionService;
 import com.mdung.be_iot.service.MqttService;
@@ -37,21 +38,15 @@ public class MqttController {
         this.actionService = actionService;
     }
 
-    @GetMapping("/turn-on-off-light")
+    @PostMapping("/turn-on-off-light")
     @Operation(summary = "Publish message to mqtt")
     public BaseResponse<Boolean> changeLight(
-            @RequestParam String deviceId,
-            @Parameter(
-                    description = "The action to perform on the light",
-                    in = ParameterIn.QUERY,
-                    schema = @Schema(allowableValues = {"on", "off"})
-            )
-            @RequestParam String actionCode) {
-        String action = actionCode.equals("on") ? "Bật" : "Tắt";
-        actionService.createAction(new Action(deviceId, "Đèn", "light", action, actionCode, System.currentTimeMillis()));
+            @RequestBody ActionInputDto actionInputDto) {
+        String action = actionInputDto.getActionCode().equals("on") ? "Bật" : "Tắt";
+        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Đèn", "light", action, actionInputDto.getActionCode(), System.currentTimeMillis()));
         for (long i = 0; i < 10000000000L; i++) {
             if (i == 0) {
-                mqttService.turnLight(actionCode);
+                mqttService.turnLight(actionInputDto.getActionCode());
             }
             if (light != null) {
                 light = null;
@@ -66,21 +61,15 @@ public class MqttController {
         );
     }
 
-    @GetMapping("/turn-on-off-fan")
+    @PostMapping("/turn-on-off-fan")
     @Operation(summary = "Publish message to mqtt")
     public BaseResponse<Boolean> changeFan(
-            @RequestParam String deviceId,
-            @Parameter(
-                    description = "The action to perform on the light",
-                    in = ParameterIn.QUERY,
-                    schema = @Schema(allowableValues = {"on", "off"})
-            )
-            @RequestParam String actionCode) {
-        String action = actionCode.equals("on") ? "Bật" : "Tắt";
-        actionService.createAction(new Action(deviceId, "Quạt", "fan", action, actionCode, System.currentTimeMillis()));
+            @RequestBody ActionInputDto actionInputDto) {
+        String action = actionInputDto.getActionCode().equals("on") ? "Bật" : "Tắt";
+        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Quạt", "fan", action, actionInputDto.getActionCode(), System.currentTimeMillis()));
         for (long i = 0; i < 10000000000L; i++) {
             if (i == 0) {
-                mqttService.turnFan(actionCode);
+                mqttService.turnFan(actionInputDto.getActionCode());
             }
             if (fan != null) {
                 fan = null;
@@ -96,21 +85,15 @@ public class MqttController {
     }
 
 
-    @GetMapping("/turn-on-off-air-condition")
+    @PostMapping("/turn-on-off-air-condition")
     @Operation(summary = "Publish message to mqtt")
     public BaseResponse<Boolean> changeAirCondition(
-            @RequestParam String deviceId,
-            @Parameter(
-                    description = "The action to perform on the light",
-                    in = ParameterIn.QUERY,
-                    schema = @Schema(allowableValues = {"on", "off"})
-            )
-            @RequestParam String actionCode) {
-        String action = actionCode.equals("on") ? "Bật" : "Tắt";
-        actionService.createAction(new Action(deviceId, "Điều hoà", "air_condition", action, actionCode, System.currentTimeMillis()));
+            @RequestBody ActionInputDto actionInputDto) {
+        String action = actionInputDto.getActionCode().equals("on") ? "Bật" : "Tắt";
+        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Điều hoà", "air_condition", action, actionInputDto.getActionCode(), System.currentTimeMillis()));
         for (long i = 0; i < 10000000000L; i++) {
             if (i == 0) {
-                mqttService.turnAirConditioner(actionCode);
+                mqttService.turnAirConditioner(actionInputDto.getActionCode());
             }
             if (airConditioner != null) {
                 airConditioner = null;
