@@ -1,10 +1,7 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
-#include <ESP8266HTTPClient.h> 
 #include "DHT.h"
 
-#define Log(X) Serial.println("=========>>>>> " + String(X))
-#define LogI(X) Serial.print("=====>>>>> " + String(X))
 
 // WiFi settings
 const char *wifiName = "Ahii"; // Enter your WiFi name
@@ -13,6 +10,9 @@ const char *password = "25072003";  // Enter WiFi password
 
 // MQTT Broker settings
 const char *mosquittoServer = "172.20.10.2"; 
+const char *id = "B21DCCN268";
+String user = "B21DCCN268";
+String mqttPassword = "123";
 const char *topicData = "topic/temp-humidity-light";
 const char *topicResponse = "topic/response";
 const char *topicAction = "topic/action";
@@ -30,7 +30,7 @@ DHT dht(DPIN, DTYPE);
 #define LIGHT A0 
 
 void setup() {
-  // Set software serial baud to 115200
+
   Serial.begin(115200);
 
   setUpDHTSensor();
@@ -63,9 +63,9 @@ void connectToWifi() {
   WiFi.begin(wifiName, password);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Log("Connecting to WiFi...");
+    Serial.println("Connecting to wifi.........");
   }
-  Log("Connected to the WiFi network successfully");
+  Serial.println("Connected Wifi successfully.");
 }
 
 void connectToBroker() {
@@ -73,21 +73,26 @@ void connectToBroker() {
   client.setCallback(callback);
   
   while (!client.connected()) {
-    String client_id = "B21DCCN268";
-    Serial.printf("The client %s connects to the MQTT broker\n", client_id.c_str());
   
-    if (client.connect(client_id.c_str())) {
-      Log("MQTT broker connected");
-      client.subscribe(topicData);
-      client.subscribe(topicResponse);
-      client.subscribe(topicAction);
+    Serial.printf("The client %s connects to the MQTT broker\n", id);
+  
+    if (client.connect(id, user.c_str(), mqttPassword.c_str())) {
+      Serial.println("Connected to MQTT successfully");
+      subscribe();
     } else {
-      LogI("Failed with state ");
-      Log(client.state());
+      Serial.print("Connect to MQTT failed with status: ");
+      Serial.println(client.state());
       delay(2000);
     }
   }
 }
+
+void subscribe() {
+    client.subscribe(topicData);
+    client.subscribe(topicResponse);
+    client.subscribe(topicAction);
+}
+
 void callback(char* topic, byte* payload, unsigned int length) {
   // Convert payload to string
   String message;
@@ -129,13 +134,10 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 
-
-
-
 void loop() {
   client.loop();
 
-  // Only publish sensor data if a certain time interval has passed
+
   static unsigned long lastPublishTime = 0;
   unsigned long currentMillis = millis();
   
@@ -147,7 +149,7 @@ void loop() {
     float hu = dht.readHumidity();          
 
     if (isnan(tc) || isnan(hu)) {
-      Log("Failed to read from DHT sensor!");
+      Serial.println("Failed to read from DHT sensor!");
       return;
     }
 
@@ -156,11 +158,13 @@ void loop() {
     String payload = "{";
     payload += "\"temperature\": ";
     payload += tc;
-    payload += ", \"humidity\": ";
+    payload += ", \"humidity\": "; 
     payload += hu;
     payload += ", \"light\": ";
     payload += light;
     payload += "}";
+
+    Serial.println(payload);
 
     client.publish(topicData, payload.c_str());
     delay(1000);

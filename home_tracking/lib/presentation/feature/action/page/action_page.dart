@@ -2,6 +2,7 @@ import 'package:auto_route/annotations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:home_tracking/presentation/components/loading.dart';
+import 'package:home_tracking/presentation/components/table_view.dart';
 import 'package:home_tracking/presentation/feature/action/bloc/action_bloc.dart';
 import 'package:home_tracking/presentation/feature/home/widget/app_input.dart';
 import 'package:home_tracking/presentation/feature/home/widget/item_row.dart';
@@ -42,7 +43,10 @@ class _ActionPageState extends State<ActionPage> {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF05231F),
-          title:  Text("Action", style: StyleApp.bold(color: Colors.white),),
+          title: Text(
+            "Action",
+            style: StyleApp.bold(color: Colors.white),
+          ),
         ),
         body: Container(
           decoration: const BoxDecoration(
@@ -124,7 +128,7 @@ class _ActionPageState extends State<ActionPage> {
                     color: Colors.grey,
                   ),
                 ),
-                child:  Icon(
+                child: Icon(
                   myBloc.isSort ? Icons.arrow_upward : Icons.arrow_downward,
                   color: Colors.grey,
                 ),
@@ -188,21 +192,33 @@ class _ActionPageState extends State<ActionPage> {
         if (state.status == Status.loading && state.data == null) {
           return const BaseLoading();
         }
-        if(state.data == null || state.data!.isEmpty){
+        if (state.data == null || state.data!.isEmpty) {
           return const EmptyContainer();
         }
-        return ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          itemCount: state.data?.length ?? 0,
-          itemBuilder: (context, index) {
-            return _itemView(state.data![index]);
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return const Divider();
-          },
+        return TableView(
+          headers: ['Id', 'Thiết bị', 'Thao tác', 'Thời gian'],
+          data: state.data!.map((e) {
+            return [
+              e.id.toString(),
+              e.appliance ?? 'Không có dữ liệu',
+              e.action ?? 'Không có dữ liệu',
+              DateTime.fromMillisecondsSinceEpoch(e.time ?? 0)
+                  .formatCustom(format: "HH:mm:ss dd/MM/yyyy"),
+            ];
+          }).toList(),
         );
+        // return ListView.separated(
+        //   shrinkWrap: true,
+        //   physics: const NeverScrollableScrollPhysics(),
+        //   padding: EdgeInsets.zero,
+        //   itemCount: state.data?.length ?? 0,
+        //   itemBuilder: (context, index) {
+        //     return _itemView(state.data![index]);
+        //   },
+        //   separatorBuilder: (BuildContext context, int index) {
+        //     return const Divider();
+        //   },
+        // );
       },
     );
   }
@@ -264,28 +280,28 @@ class _ActionPageState extends State<ActionPage> {
     );
   }
 
-  _itemView(ActionModel item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          item.deviceId ?? 'Không có dữ liệu',
-          style: StyleApp.bold(),
-        ),
-        8.height,
-        ItemRow(title: 'Thiết bị', value: item.appliance ?? 'Không có dữ liệu'),
-        ItemRow(
-          title: 'Thao tác',
-          value: item.action ?? 'Không có dữ liệu',
-          valueColor: colorText(item.action ?? ''),
-        ),
-        ItemRow(
-            title: 'Thời gian',
-            value: DateTime.fromMillisecondsSinceEpoch(item.time ?? 0)
-                .formatCustom(format: "HH:mm:ss dd/MM/yyyy")),
-      ],
-    );
-  }
+  // _itemView(ActionModel item) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         item.deviceId ?? 'Không có dữ liệu',
+  //         style: StyleApp.bold(),
+  //       ),
+  //       8.height,
+  //       ItemRow(title: 'Thiết bị', value: item.appliance ?? 'Không có dữ liệu'),
+  //       ItemRow(
+  //         title: 'Thao tác',
+  //         value: item.action ?? 'Không có dữ liệu',
+  //         valueColor: colorText(item.action ?? ''),
+  //       ),
+  //       ItemRow(
+  //           title: 'Thời gian',
+  //           value: DateTime.fromMillisecondsSinceEpoch(item.time ?? 0)
+  //               .formatCustom(format: "HH:mm:ss dd/MM/yyyy")),
+  //     ],
+  //   );
+  // }
 
   Color colorText(String code) {
     switch (code) {
@@ -312,19 +328,16 @@ class _ActionPageState extends State<ActionPage> {
           children: [
             const Icon(Icons.date_range_outlined),
             const SizedBox(width: sp8),
-            BlocBuilder<ActionBloc,
-                BlocState>(
+            BlocBuilder<ActionBloc, BlocState>(
               builder: (context, state) {
                 var text = '';
                 switch (myBloc.paramDate?.dateRange) {
                   case DateRangeEnum.option:
                     text =
-                    '${myBloc.paramDate?.startDate?.formatDefault} - ${myBloc.paramDate?.endDate?.formatDefault}';
+                        '${myBloc.paramDate?.startDate?.formatDefault} - ${myBloc.paramDate?.endDate?.formatDefault}';
                     break;
                   default:
-                    text = myBloc.paramDate?.dateRange
-                        ?.toName ??
-                        '';
+                    text = myBloc.paramDate?.dateRange?.toName ?? '';
                     break;
                 }
                 return Expanded(

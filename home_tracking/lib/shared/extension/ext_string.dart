@@ -13,4 +13,8 @@ extension extString on String? {
     }
     return '';
   }
+
+  bool isDigritOnly() {
+    return RegExp(r'^[0-9]+$').hasMatch(this!);
+  }
 }

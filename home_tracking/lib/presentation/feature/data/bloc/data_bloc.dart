@@ -86,7 +86,7 @@ class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
         pagination = res.extra;
         emit(state.copyWith(status: Status.success, data: res.data));
       } else {
-        emit(state.copyWith(status: Status.error, msg: res.message));
+        emit(state.copyWith(status: Status.error, msg: res.message, data: []));
       }
     });
 

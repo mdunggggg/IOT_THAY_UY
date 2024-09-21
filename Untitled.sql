@@ -1,6 +1,7 @@
 CREATE DATABASE  IF NOT EXISTS `iot_thay_uy`;
 USE `iot_thay_uy`;
 
+
 CREATE TABLE data_sensor (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     temperature DOUBLE NOT NULL,
@@ -19,5 +20,19 @@ CREATE TABLE `action` (
     `time` BIGINT,
     PRIMARY KEY (`id`)
 );
+
+
+ALTER TABLE data_sensor
+ADD COLUMN temp VARCHAR(255);
+ALTER TABLE data_sensor DROP COLUMN temp;
+
+
+
+
+
+
+
+
+
 
 

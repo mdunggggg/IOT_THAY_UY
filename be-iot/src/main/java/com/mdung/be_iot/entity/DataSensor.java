@@ -29,6 +29,11 @@ public class DataSensor {
     @Column(name = "light")
     private double light;
 
+//    @Getter
+//    @Setter
+//    @Column(name = "temp")
+//    private Double temp;
+
     @Getter
     @Setter
     @Column(name = "time")

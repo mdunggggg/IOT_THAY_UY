@@ -9,7 +9,7 @@ class ItemOverview extends StatelessWidget {
       required this.title,
       required this.subTitle, required this.isUp});
 
-  final Image image;
+  final Widget image;
   final String title;
   final String subTitle;
   final bool isUp;

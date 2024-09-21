@@ -13,6 +13,7 @@ import '../../../shared/colors/colors.dart';
 import '../../../shared/style_text/style_text.dart';
 import '../../blocs/bloc_state.dart';
 import '../../components/loading.dart';
+import '../../components/table_view.dart';
 import '../../constants/colors.dart';
 import '../../constants/spacing.dart';
 import '../../constants/typography.dart';
@@ -246,6 +247,18 @@ class _DataPageState extends State<DataPage> {
         if(state.data == null || state.data!.isEmpty){
           return const EmptyContainer();
         }
+        return TableView(
+          headers: ['ID', 'Nhiệt độ', 'Độ ẩm', 'Ánh sáng', 'Thời gian'],
+          data: state.data!.map((e) {
+            return [
+              e.id.toString(),
+              e.temperature?.toString() ?? '',
+              e.humidity?.toString() ?? '',
+              e.light?.toString() ?? '',
+              DateTime.fromMillisecondsSinceEpoch(e.time ?? 0).formatCustom(format: "HH:mm:ss dd/MM/yyyy"),
+            ];
+          }).toList(),
+        );
         return ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -323,14 +336,15 @@ class _DataPageState extends State<DataPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ItemRow(
-          title: 'Thời gian',
-          value:
-              DateTime.fromMillisecondsSinceEpoch(item.time ?? 0).formatCustom(format: "HH:mm:ss dd/MM/yyyy"),
-        ),
+
         ItemRow(title: 'Nhiệt độ', value: item.temperature?.toString() ?? ''),
         ItemRow(title: 'Độ ẩm', value: item.humidity?.toString() ?? ''),
         ItemRow(title: 'Ánh sáng', value: item.light?.toString() ?? ''),
+        ItemRow(
+          title: 'Thời gian',
+          value:
+          DateTime.fromMillisecondsSinceEpoch(item.time ?? 0).formatCustom(format: "HH:mm:ss dd/MM/yyyy"),
+        ),
       ],
     );
   }

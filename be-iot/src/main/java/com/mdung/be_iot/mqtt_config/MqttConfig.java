@@ -43,7 +43,7 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", "BE_B21DCCN268", "topic/temp-humidity-light", "topic/response");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", mqttClientFactory(), "topic/temp-humidity-light", "topic/response");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(0);
@@ -73,8 +73,8 @@ public class MqttConfig {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
         options.setServerURIs(new String[] {"tcp://172.20.10.2:1883"});
-        options.setUserName("Ahii");
-        options.setPassword("25072003".toCharArray());
+        options.setUserName("B21DCCN268");
+        options.setPassword("123".toCharArray());
         factory.setConnectionOptions(options);
         return factory;
     }

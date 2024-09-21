@@ -161,15 +161,15 @@ class _HomePageState extends State<HomePage>
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ItemOverview(
-                image: Assets.icons.sun.image(height: 25, width: 25),
-                title: "Sun light",
+                image: Icon(Icons.sunny, color: Colors.red,),
+                title: "Light",
                 subTitle: "${1024 - chartBloc.list.last.light.validator} lux",
                 isUp: 1024 - chartBloc.list.last.light.validator >=
                     1024 - chartBloc.list[max(0, chartBloc.list.length - 2)].light
                         .validator,
               ).expanded(),
               ItemOverview(
-                image: Assets.icons.water.image(height: 25, width: 25),
+                image: Icon(Icons.water_drop_outlined, color: Colors.blue,),
                 title: "Humidity",
                 subTitle: "${chartBloc.list.last.humidity.validator}%",
                 isUp: chartBloc.list.last.humidity.validator >=
