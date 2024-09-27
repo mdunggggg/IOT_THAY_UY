@@ -142,6 +142,8 @@ class _HomePageState extends State<HomePage>
         if (state.status == Status.loading || chartBloc.list.isEmpty) {
           return BaseLoading();
         }
+        myBloc.setLight2(chartBloc.isChange);
+
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -184,6 +186,14 @@ class _HomePageState extends State<HomePage>
                     chartBloc.list[max(0, chartBloc.list.length - 2)]
                         .temperature.validator,
               ).expanded(),
+              ItemOverview(
+                image: Assets.icons.temp.image(height: 25, width: 25),
+                title: "Windy",
+                subTitle: "${chartBloc.list.last.windy.validator}°C",
+                isUp: chartBloc.list.last.temperature.validator >=
+                    chartBloc.list[max(0, chartBloc.list.length - 2)]
+                        .temperature.validator,
+              ).expanded(),
             ],
           ),
         );
@@ -212,7 +222,13 @@ class _HomePageState extends State<HomePage>
           ChartOverview(
             bloc: chartBloc,
           ),
-          16.height,
+          Row(
+            children: [
+              Text("Temp, Humd", style: TextStyle(fontSize: 10),).expanded(),
+              Text("Light", textAlign: TextAlign.end, style: TextStyle(fontSize: 10),).expanded(),
+            ],
+          ),
+          Divider(),
           BlocBuilder<HomeBloc, BlocState>(
             builder: (context, state) {
               if (state.status == Status.loading) {

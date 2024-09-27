@@ -68,4 +68,12 @@ public class DataSensorController {
     }
 
 
+    @GetMapping("/solan-bat-tat-trong-ngay")
+    @Operation(summary = "Get number of times the device is turned on and off in a day")
+    public BaseResponse<Long> solanBatTatQuatTrongNgay() {
+        return BaseResponse.success(dataSensorService.countByTemperatureGreaterThan(28.2));
+    }
+
+
+
 }

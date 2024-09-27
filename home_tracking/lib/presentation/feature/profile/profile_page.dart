@@ -128,17 +128,17 @@ class _ProfilePageState extends State<ProfilePage> {
               onTap: () {
                 _launchUrl(Uri.parse('https://github.com/mdunggggg/IOT_THAY_UY'));
               },
-              child: const ItemRow(title: "Github", value: "mdunggggg")),
+              child: const ItemRow(title: "Github", value: "mdunggggg", valueColor: Colors.blue,)),
           InkWell(
               onTap: () {
                 _launchUrl(Uri.parse('https://drive.google.com/drive/folders/1q7Zhk7ltzcanEwENnNFiQuyqex-4yRvO?resourcekey=0-VFyuRaOTS3xvLkeSJUQvHg'));
               },
-              child: const ItemRow(title: "Báo cáo", value: "Báo cáo")),
+              child: const ItemRow(title: "Báo cáo", value: "Báo cáo", valueColor: Colors.blue,)),
           InkWell(
               onTap: () {
                 _launchUrl(Uri.parse('https://documenter.getpostman.com/view/33411657/2sAXjNXqYs'));
               },
-              child: const ItemRow(title: "API Docs", value: "API Docs")),
+              child: const ItemRow(title: "API Docs", value: "API Docs", valueColor: Colors.blue,)),
         ],
       ),
     );

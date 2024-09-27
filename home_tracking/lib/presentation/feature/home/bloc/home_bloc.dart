@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:bloc/bloc.dart';
@@ -83,6 +84,11 @@ class HomeBloc extends Cubit<BlocState<List<DataSensorModel>>> {
     if(res.data == false) {
       _light = !_light;
     }
+    emit(state.copyWith(status: Status.success));
+  }
+  Future<void> setLight2(bool value) async {
+    _light = value;
+    print('likkeee $value');
     emit(state.copyWith(status: Status.success));
   }
 

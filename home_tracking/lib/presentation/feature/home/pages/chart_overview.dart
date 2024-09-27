@@ -68,6 +68,11 @@ class _ChartOverviewState extends State<ChartOverview> {
                   'Light: ${data.light} lux',
                   style: StyleApp.bold(color: Colors.white),
                 ),
+              if (seriesIndex == 2)
+                Text(
+                  'Windy: ${data.light}',
+                  style: StyleApp.bold(color: Colors.white),
+                ),
               Divider(
                 color: Colors.white,
               ),
@@ -143,7 +148,7 @@ class _ChartOverviewState extends State<ChartOverview> {
         minimum: 0,
         maximum: 100,
         interval: 10,
-        labelFormat: '{value}',
+        labelFormat: '{value} ',
         maximumLabels: 10,
       ),
       series: _getMultipleAxisLineSeries(),
@@ -180,7 +185,16 @@ class _ChartOverviewState extends State<ChartOverview> {
           yValueMapper: (DataSensorModel sales, _) => 1024 - (sales.light ?? 0),
           name: 'Light',
           enableTooltip: true,
-          markerSettings: MarkerSettings(isVisible: true))
+          markerSettings: MarkerSettings(isVisible: true)),
+      LineSeries<DataSensorModel, String>(
+          color: Colors.purple,
+          dataSource: widget.bloc.list,
+          xValueMapper: (DataSensorModel sales, _) => DateFormat('hh:mm:ss')
+              .format(DateTime.fromMillisecondsSinceEpoch(sales.time ?? 0)),
+          yValueMapper: (DataSensorModel sales, _) => sales.windy ?? 0,
+          name: 'Windy',
+          enableTooltip: true,
+          markerSettings: MarkerSettings(isVisible: true)),
     ];
   }
 

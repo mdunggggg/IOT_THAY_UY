@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "action")
 public class Action {
@@ -42,12 +44,12 @@ public class Action {
     @Setter
     @Getter
     @Column(name = "time")
-    private Long time;
+    private LocalDateTime time;
 
     public Action() {
     }
 
-    public Action(String deviceId, String appliance, String applianceCode, String action, String actionCode, Long time) {
+    public Action(String deviceId, String appliance, String applianceCode, String action, String actionCode, LocalDateTime time) {
         this.deviceId = deviceId;
         this.appliance = appliance;
         this.applianceCode = applianceCode;

@@ -89,7 +89,14 @@ class _DataPageState extends State<DataPage> {
       padding: 16.padding,
       margin: 16.padding,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          BlocBuilder<DataBloc, BlocState>(
+            bloc: myBloc,
+            builder: (context, state) {
+              return Text("Số lần nhiet do >= 26.2: ${myBloc.solanBatTat}");
+            },
+          ),
           _buildSearch(),
           16.height,
           _buildDropdown(),
@@ -248,13 +255,14 @@ class _DataPageState extends State<DataPage> {
           return const EmptyContainer();
         }
         return TableView(
-          headers: ['ID', 'Nhiệt độ', 'Độ ẩm', 'Ánh sáng', 'Thời gian'],
+          headers: ['ID', 'Nhiệt độ', 'Độ ẩm', 'Ánh sáng','Gio', 'Thời gian'],
           data: state.data!.map((e) {
             return [
               e.id.toString(),
               e.temperature?.toString() ?? '',
               e.humidity?.toString() ?? '',
               e.light?.toString() ?? '',
+              e.windy.toString() ?? '',
               DateTime.fromMillisecondsSinceEpoch(e.time ?? 0).formatCustom(format: "HH:mm:ss dd/MM/yyyy"),
             ];
           }).toList(),

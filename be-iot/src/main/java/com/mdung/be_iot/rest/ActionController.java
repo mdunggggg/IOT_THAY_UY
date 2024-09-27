@@ -53,4 +53,10 @@ public class ActionController {
                 actionService.getAllActions(appliance, search, pageable, startDate, endDate)
         );
     }
+
+    @GetMapping("/solan-bat-tat-trong-ngay")
+    @Operation(summary = "Get number of times the device is turned on and off in a day")
+    public BaseResponse<Integer> solanBatTatQuatTrongNgay() {
+        return BaseResponse.success(actionService.solanBatTatQuatTrongNgay());
+    }
 }

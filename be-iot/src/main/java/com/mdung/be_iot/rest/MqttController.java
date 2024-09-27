@@ -7,19 +7,12 @@ import com.mdung.be_iot.entity.Action;
 import com.mdung.be_iot.service.ActionService;
 import com.mdung.be_iot.service.MqttService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.integration.annotation.ServiceActivator;
-import org.springframework.integration.mqtt.support.MqttHeaders;
-import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHandler;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.concurrent.CountDownLatch;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/mqtt")
@@ -43,7 +36,7 @@ public class MqttController {
     public BaseResponse<Boolean> changeLight(
             @RequestBody ActionInputDto actionInputDto) {
         String action = actionInputDto.getActionCode().equals("on") ? "Bật" : "Tắt";
-        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Đèn", "light", action, actionInputDto.getActionCode(), System.currentTimeMillis()));
+        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Đèn", "light", action, actionInputDto.getActionCode(), LocalDateTime.now()));
         for (long i = 0; i < 10000000000L; i++) {
             if (i == 0) {
                 mqttService.turnLight(actionInputDto.getActionCode());
@@ -66,7 +59,7 @@ public class MqttController {
     public BaseResponse<Boolean> changeFan(
             @RequestBody ActionInputDto actionInputDto) {
         String action = actionInputDto.getActionCode().equals("on") ? "Bật" : "Tắt";
-        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Quạt", "fan", action, actionInputDto.getActionCode(), System.currentTimeMillis()));
+        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Quạt", "fan", action, actionInputDto.getActionCode(), LocalDateTime.now()));
         for (long i = 0; i < 10000000000L; i++) {
             if (i == 0) {
                 mqttService.turnFan(actionInputDto.getActionCode());
@@ -90,7 +83,7 @@ public class MqttController {
     public BaseResponse<Boolean> changeAirCondition(
             @RequestBody ActionInputDto actionInputDto) {
         String action = actionInputDto.getActionCode().equals("on") ? "Bật" : "Tắt";
-        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Điều hoà", "air_condition", action, actionInputDto.getActionCode(), System.currentTimeMillis()));
+        actionService.createAction(new Action(actionInputDto.getDeviceId(), "Điều hoà", "air_condition", action, actionInputDto.getActionCode(), LocalDateTime.now()));
         for (long i = 0; i < 10000000000L; i++) {
             if (i == 0) {
                 mqttService.turnAirConditioner(actionInputDto.getActionCode());

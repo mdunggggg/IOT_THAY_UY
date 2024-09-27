@@ -17,6 +17,7 @@ class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
   final DataSensorRepo _repo;
   PaginationModel? pagination;
   ParamDate? paramDate = ParamDate();
+  int solanBatTat = -1;
 
   bool _isSort = false;
 
@@ -71,8 +72,13 @@ class DataBloc extends Cubit<BlocState<List<DataSensorModel>>> {
     getData();
   }
 
-  Future<void> getData() {
+  Future<void> getData() async {
+
     emit(state.copyWith(status: Status.loading));
+    final res2 =await  _repo.getSolanBatTatQuat();
+    if(res2.code == 200){
+      solanBatTat = res2.data;
+    }
     return _repo.getDataSensors(
       page: page,
       size: size,

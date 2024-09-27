@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.mdung.be_iot.utils.DateTimeUtils.localDateToLongEndOfDay;
@@ -39,29 +40,39 @@ public class DataSensorServiceImpl implements DataSensorService {
             }
             if (search != null && type != null && !type.equals("all")) {
                 specification = specification.and((root, query, criteriaBuilder) ->
-                        criteriaBuilder.equal(root.get(type), search));
+                        criteriaBuilder.like(root.get(type), "%" + search + "%"));
             }
             if (search != null && type != null && type.equals("all")) {
                 specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get("temperature"), search),
-                        criteriaBuilder.equal(root.get("humidity"), search),
-                        criteriaBuilder.equal(root.get("light"), search))
+                        criteriaBuilder.like(criteriaBuilder.function("str", String.class, root.get("temperature")), "%" + search + "%"),
+                        criteriaBuilder.like(criteriaBuilder.function("str", String.class, root.get("humidity")), "%" + search + "%"),
+                        criteriaBuilder.like(criteriaBuilder.function("str", String.class, root.get("light")), "%" + search + "%"),
+                        criteriaBuilder.like(
+                                criteriaBuilder.function(
+                                        "DATE_FORMAT", String.class, root.get("time"), criteriaBuilder.literal("%H:%i:%s %d/%m/%y")),
+                                "%" + search + "%"
+                        ))
                 );
             }
             if(search != null && type == null){
                 specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.or(
-                        criteriaBuilder.equal(root.get("temperature"), search),
-                        criteriaBuilder.equal(root.get("humidity"), search),
-                        criteriaBuilder.equal(root.get("light"), search))
+                        criteriaBuilder.like(criteriaBuilder.function("str", String.class, root.get("temperature")), "%" + search + "%"),
+                        criteriaBuilder.like(criteriaBuilder.function("str", String.class, root.get("humidity")), "%" + search + "%"),
+                        criteriaBuilder.like(criteriaBuilder.function("str", String.class, root.get("light")), "%" + search + "%")
+                        ,  criteriaBuilder.like(
+                                criteriaBuilder.function(
+                                        "DATE_FORMAT", String.class, root.get("time"), criteriaBuilder.literal("%H:%i:%s %d/%m/%y")),
+                                "%" + search + "%"
+                        ))
                 );
             }
             if (startDate != null) {
                 specification = specification.and((root, query, criteriaBuilder) ->
-                        criteriaBuilder.greaterThanOrEqualTo(root.get("time"), localDateToLongStartOfDay(startDate)));
+                        criteriaBuilder.greaterThanOrEqualTo(root.get("time"), startDate.atStartOfDay()));
             }
             if (endDate != null) {
                 specification = specification.and((root, query, criteriaBuilder) ->
-                        criteriaBuilder.lessThanOrEqualTo(root.get("time"), localDateToLongEndOfDay(endDate)));
+                        criteriaBuilder.lessThanOrEqualTo(root.get("time"), endDate.atTime(23, 59, 59)));
             }
 
         } catch (Exception e) {
@@ -116,17 +127,20 @@ public class DataSensorServiceImpl implements DataSensorService {
 
     @Override
     public List<DataSensor> getDataSensorsAfterId(Long lastId, Integer size) {
-
-
         if (lastId == null) {
             lastId = 0L;
         }
         if (size == null || size <= 0) {
-            return dataSensorRepository.findByIdGreaterThanAndTimeGreaterThanEqualOrderByTimeAscIdAsc(lastId, 0L);
+            return dataSensorRepository.findByIdGreaterThanOrderByTimeAscIdAsc(lastId );
         } else {
             Pageable pageable = PageRequest.of(0, size);
-            return dataSensorRepository.findByIdGreaterThanAndTimeGreaterThanEqualOrderByTimeAscIdAsc(lastId, 0L, pageable);
+            return dataSensorRepository.findByIdGreaterThanOrderByTimeAscIdAsc(lastId, pageable);
         }
+    }
+
+    @Override
+    public long countByTemperatureGreaterThan(double temperature) {
+        return dataSensorRepository.countByTemperatureGreaterThan(26.2) ;
     }
 
     private Specification<DataSensor> sortBy(String field, boolean ascending) {
@@ -139,6 +153,9 @@ public class DataSensorServiceImpl implements DataSensorService {
             return criteriaBuilder.conjunction();
         };
     }
+
+
+
 
 
 }

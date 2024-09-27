@@ -19,6 +19,8 @@ import org.springframework.integration.mqtt.support.DefaultPahoMessageConverter;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Configuration
@@ -43,7 +45,7 @@ public class MqttConfig {
     @Bean
     public MqttPahoMessageDrivenChannelAdapter mqttInbound() {
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.2:1883", mqttClientFactory(), "topic/temp-humidity-light", "topic/response");
+                new MqttPahoMessageDrivenChannelAdapter("tcp://172.20.10.4:1883", mqttClientFactory(), "topic/temp-humidity-light", "topic/response");
         adapter.setCompletionTimeout(5000);
         adapter.setConverter(new DefaultPahoMessageConverter());
         adapter.setQos(0);
@@ -59,7 +61,7 @@ public class MqttConfig {
             try {
                 String payload = (String) message.getPayload();
                 DataSensor dataSensor = objectMapper.readValue(payload, DataSensor.class);
-                dataSensor.setTime(System.currentTimeMillis());
+                dataSensor.setTime(LocalDateTime.now());
                 dataSensorService.createDataSensor(dataSensor);
                 System.out.println("Saved data sensor: " + dataSensor);
             } catch (Exception e) {
@@ -72,7 +74,7 @@ public class MqttConfig {
     public MqttPahoClientFactory mqttClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
-        options.setServerURIs(new String[] {"tcp://172.20.10.2:1883"});
+        options.setServerURIs(new String[] {"tcp://172.20.10.4:1883"});
         options.setUserName("B21DCCN268");
         options.setPassword("123".toCharArray());
         factory.setConnectionOptions(options);

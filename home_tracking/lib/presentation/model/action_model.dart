@@ -23,7 +23,8 @@ class ActionModel {
     applianceCode = json['applianceCode'];
     action = json['action'];
     actionCode = json['actionCode'];
-    time = json['time'];
+    DateTime time = DateTime.parse(json['time']);
+    this.time = time.millisecondsSinceEpoch;
   }
 
   Map<String, dynamic> toJson() {

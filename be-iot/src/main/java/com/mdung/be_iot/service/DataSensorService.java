@@ -13,4 +13,6 @@ public interface DataSensorService {
     DataSensor createDataSensor(DataSensor dataSensor);
 
     List<DataSensor> getDataSensorsAfterId(Long lastId, Integer size);
+
+    long countByTemperatureGreaterThan(double temperature);
 }

@@ -1,13 +1,12 @@
 CREATE DATABASE  IF NOT EXISTS `iot_thay_uy`;
 USE `iot_thay_uy`;
 
-
 CREATE TABLE data_sensor (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     temperature DOUBLE NOT NULL,
     humidity DOUBLE NOT NULL,
     light DOUBLE NOT NULL, 
-    time BIGINT
+    time DATETIME
 );
 
 CREATE TABLE `action` (
@@ -17,14 +16,14 @@ CREATE TABLE `action` (
     `appliance_code` VARCHAR(255) NOT NULL,
     `action` VARCHAR(255) NOT NULL,
     `action_code` VARCHAR(255) NOT NULL,
-    `time` BIGINT,
+    `time` DATETIME,
     PRIMARY KEY (`id`)
 );
 
 
-ALTER TABLE data_sensor
-ADD COLUMN temp VARCHAR(255);
-ALTER TABLE data_sensor DROP COLUMN temp;
+-- ALTER TABLE data_sensor
+-- ADD COLUMN temp VARCHAR(255);
+-- ALTER TABLE data_sensor DROP COLUMN temp;
 
 
 

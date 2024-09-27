@@ -50,11 +50,13 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i295.DataSensorRepo(gh<_i771.BaseDio>()));
     gh.factory<_i430.DataBloc>(
         () => _i430.DataBloc(gh<_i295.DataSensorRepo>()));
-    gh.factory<_i200.ChartBloc>(
-        () => _i200.ChartBloc(gh<_i295.DataSensorRepo>()));
     gh.factory<_i405.ActionBloc>(
         () => _i405.ActionBloc(gh<_i221.ActionRepository>()));
     gh.factory<_i722.HomeBloc>(() => _i722.HomeBloc(
+          gh<_i295.DataSensorRepo>(),
+          gh<_i563.MqttRepository>(),
+        ));
+    gh.factory<_i200.ChartBloc>(() => _i200.ChartBloc(
           gh<_i295.DataSensorRepo>(),
           gh<_i563.MqttRepository>(),
         ));

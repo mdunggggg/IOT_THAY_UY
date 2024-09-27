@@ -89,7 +89,15 @@ class _ActionPageState extends State<ActionPage> {
       padding: 16.padding,
       margin: 16.padding,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          BlocBuilder<ActionBloc, BlocState>(
+            bloc: myBloc,
+            builder: (context, state) {
+              return Text("Số lần bật đèn trong ngày: ${myBloc.solanBatTat}");
+            },
+          ),
+          16.height,
           _buildSearch(),
           16.height,
           _buildDropdown(),
@@ -160,13 +168,14 @@ class _ActionPageState extends State<ActionPage> {
               onChanged: myBloc.changeDevice,
               items: List.generate(
                 4,
-                (index) => DropdownMenuItem(
-                  value: index,
-                  child: Text(
-                    myBloc.devices[index].name,
-                    style: p5,
-                  ),
-                ),
+                    (index) =>
+                    DropdownMenuItem(
+                      value: index,
+                      child: Text(
+                        myBloc.devices[index].name,
+                        style: p5,
+                      ),
+                    ),
               ),
               isBorder: false,
               radius: sp8,
@@ -334,7 +343,8 @@ class _ActionPageState extends State<ActionPage> {
                 switch (myBloc.paramDate?.dateRange) {
                   case DateRangeEnum.option:
                     text =
-                        '${myBloc.paramDate?.startDate?.formatDefault} - ${myBloc.paramDate?.endDate?.formatDefault}';
+                    '${myBloc.paramDate?.startDate?.formatDefault} - ${myBloc
+                        .paramDate?.endDate?.formatDefault}';
                     break;
                   default:
                     text = myBloc.paramDate?.dateRange?.toName ?? '';

@@ -10,4 +10,6 @@ public interface ActionService {
     Action createAction(Action action);
 
     Pagination getAllActions(String appliance, String search, Pageable pageable, LocalDate startDate, LocalDate endDate);
+
+    int solanBatTatQuatTrongNgay();
 }

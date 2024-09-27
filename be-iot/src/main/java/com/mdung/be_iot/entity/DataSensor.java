@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "data_sensor")
 public class DataSensor {
@@ -29,20 +31,20 @@ public class DataSensor {
     @Column(name = "light")
     private double light;
 
-//    @Getter
-//    @Setter
-//    @Column(name = "temp")
-//    private Double temp;
+    @Getter
+    @Setter
+    @Column(name = "windy")
+    private Double windy;
 
     @Getter
     @Setter
     @Column(name = "time")
-    private Long time;
+    private LocalDateTime time;
 
     public DataSensor() {
     }
 
-    public DataSensor(double temperature, double humidity, Long time) {
+    public DataSensor(double temperature, double humidity, LocalDateTime time) {
         this.temperature = temperature;
         this.humidity = humidity;
         this.time = time;
@@ -56,6 +58,7 @@ public class DataSensor {
                 ", humidity=" + humidity +
                 ", light=" + light +
                 ", time=" + time +
+                ", windy=m" + windy +
                 '}';
     }
 }

@@ -3,6 +3,7 @@ class DataSensorModel {
   double? temperature;
   double? humidity;
   double? light;
+  double? windy;
   int? time;
 
   DataSensorModel(
@@ -13,7 +14,9 @@ class DataSensorModel {
     temperature = json['temperature'];
     humidity = json['humidity'];
     light = json['light'];
-    time = json['time'];
+    windy = json['windy'];
+    DateTime time = DateTime.parse(json['time']);
+    this.time = time.millisecondsSinceEpoch;
   }
 
   Map<String, dynamic> toJson() {

@@ -9,7 +9,7 @@ const char *password = "25072003";  // Enter WiFi password
 
 
 // MQTT Broker settings
-const char *mosquittoServer = "172.20.10.2"; 
+const char *mosquittoServer = "172.20.10.4"; 
 const char *id = "B21DCCN268";
 String user = "B21DCCN268";
 String mqttPassword = "123";
@@ -153,7 +153,8 @@ void loop() {
       return;
     }
 
-    float light = analogRead(0);
+    float light = analog Read(0);
+    float windy = random(0, 10001) / 100.0; 
 
     String payload = "{";
     payload += "\"temperature\": ";
@@ -162,6 +163,8 @@ void loop() {
     payload += hu;
     payload += ", \"light\": ";
     payload += light;
+    payload += ", \"windy\": ";
+    payload += windy;
     payload += "}";
 
     Serial.println(payload);

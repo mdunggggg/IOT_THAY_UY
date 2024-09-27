@@ -20,6 +20,7 @@ class ActionBloc extends Cubit<BlocState<List<ActionModel>>> {
   ParamDate? paramDate = ParamDate();
 
   final DelayCallBack _delayCallBack = DelayCallBack(delay: 500.milliseconds);
+  int solanBatTat = -1;
 
   static const int size = 10;
   int page = 0;
@@ -67,6 +68,10 @@ class ActionBloc extends Cubit<BlocState<List<ActionModel>>> {
 
   Future<void> getData() async {
     emit(state.copyWith(status: Status.loading));
+    final res2 =await  _actionRepository.getSolanBatTatQuat();
+    if(res2.code == 200){
+      solanBatTat = res2.data;
+    }
     final res = await _actionRepository.getActions(
       page: page,
       size: size,

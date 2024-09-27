@@ -54,4 +54,22 @@ class ActionRepository {
       return BaseResponseModel(code: 500, message: e.toString(), data: []);
     }
   }
+
+  Future<BaseResponseModel> getSolanBatTatQuat() async {
+      try {
+       final response = await _dio.get('actions/solan-bat-tat-trong-ngay');
+       return BaseResponseModel(
+         code: response.data['status']['code'],
+         message: response.data['status']['message'],
+         data: response.data['data']
+       );
+      }
+      catch(e){
+        return BaseResponseModel(
+          code: 400,
+          message: "00",
+          data: 0
+        );
+      }
+  }
 }

@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static com.mdung.be_iot.utils.DateTimeUtils.*;
 
@@ -50,20 +52,33 @@ public class ActionServiceImpl implements ActionService {
                             criteriaBuilder.like(root.get("appliance"), "%" + search + "%"),
                             criteriaBuilder.like(root.get("actionCode"), "%" + search + "%"),
                             criteriaBuilder.like(root.get("applianceCode"), "%" + search + "%"),
-                            criteriaBuilder.like(root.get("deviceId"), "%" + search + "%")
+                            criteriaBuilder.like(root.get("deviceId"), "%" + search + "%"),
+                            criteriaBuilder.like(
+                                    criteriaBuilder.function(
+                                            "DATE_FORMAT", String.class, root.get("time"), criteriaBuilder.literal("%H:%i:%s %d/%m/%y")),
+                                    "%" + search + "%"
+                            )
+
                     ));
         }
         if (startDate != null) {
             specification = specification.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.greaterThanOrEqualTo(root.get("time"), localDateToLongStartOfDay(startDate)));
+                    criteriaBuilder.greaterThanOrEqualTo(root.get("time"), startDate.atStartOfDay()));
         }
         if (endDate != null) {
             specification = specification.and((root, query, criteriaBuilder) ->
-                    criteriaBuilder.lessThanOrEqualTo(root.get("time"), localDateToLongEndOfDay(endDate)));
+                    criteriaBuilder.lessThanOrEqualTo(root.get("time"), endDate.atTime(23, 59, 59)));
         }
         Page<Action> actions = actionRepository.findAll(specification, pageable);
         return new Pagination<>(actions.getNumber(), actions.getTotalElements(), actions.getTotalPages(), actions.getContent());
 
+    }
+
+    @Override
+    public int solanBatTatQuatTrongNgay() {
+        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+        LocalDateTime endOfDay = LocalDate.now().atTime(LocalTime.MAX);
+        return actionRepository.findByActionCodeAndApplianceCodeAndToday("on", "light", startOfDay, endOfDay ).size();
     }
 
 }
